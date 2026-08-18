@@ -14,7 +14,16 @@ interface CoachCardProps {
 export const CoachCard: React.FC<CoachCardProps> = ({ coach }) => {
   const [imageError, setImageError] = useState(false);
 
-  const bookingUrl = formatWhatsAppUrl(clubInfo.phoneRaw, coach.whatsappMessageAr);
+  const bookingUrl = formatWhatsAppUrl(clubInfo.phoneRaw, coach.whatsappMessageAr || "");
+
+  let parsedSpecialties: string[] = [];
+  try {
+    parsedSpecialties = typeof coach.specialtiesAr === "string" 
+      ? JSON.parse(coach.specialtiesAr) 
+      : coach.specialtiesAr;
+  } catch (e) {
+    parsedSpecialties = [];
+  }
 
   return (
     <a 
@@ -71,7 +80,7 @@ export const CoachCard: React.FC<CoachCardProps> = ({ coach }) => {
             {coach.roleAr}
           </p>
           <div className="flex flex-wrap gap-1 mt-1.5 justify-end">
-            {coach.specialtiesAr.slice(0, 2).map((spec, i) => (
+            {Array.isArray(parsedSpecialties) && parsedSpecialties.slice(0, 2).map((spec: string, i: number) => (
               <span
                 key={i}
                 className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-white/5"
