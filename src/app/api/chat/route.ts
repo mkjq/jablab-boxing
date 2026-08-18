@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         "X-Title": "Jab Lab Website", // Optional, for OpenRouter analytics
       },
       body: JSON.stringify({
-        model: "deepseek/deepseek-chat", // DeepSeek V3 (fastest and cheapest)
+        model: "qwen/qwen-2.5-72b-instruct:free", // Qwen 2.5 (Fast and Free)
         messages: formattedMessages,
         temperature: 0.5,
         stream: true,
