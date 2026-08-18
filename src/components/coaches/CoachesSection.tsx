@@ -12,11 +12,16 @@ export const CoachesSection = () => {
 
   useEffect(() => {
     const fetchCoaches = async () => {
-      const res = await getCoaches();
-      if (res.success && res.coaches) {
-        setCoaches(res.coaches);
+      try {
+        const res = await getCoaches();
+        if (res.success && res.coaches) {
+          setCoaches(res.coaches);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchCoaches();
   }, []);

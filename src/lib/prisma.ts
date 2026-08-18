@@ -6,7 +6,7 @@ import { PrismaClient } from '@prisma/client';
 neonConfig.useSecureWebSocket = true;
 neonConfig.fetchConnectionCache = true;
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL!;
