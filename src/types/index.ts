@@ -84,7 +84,7 @@ export interface ScheduleSession {
   coachId: string;
   coachNameEn: string;
   coachNameAr: string;
-  category: "all" | "boxing" | "conditioning" | "sparring" | "ladies" | "kids";
+  category: "all" | "boxing" | "conditioning" | "sparring" | "ladies" | "kids" | "pro";
   levelEn: string;
   levelAr: string;
 }
