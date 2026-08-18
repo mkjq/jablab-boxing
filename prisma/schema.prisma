@@ -22,12 +22,19 @@ model Coach {
   id                String   @id @default(uuid())
   nameAr            String
   nameEn            String
+  titleAr           String   @default("")
+  titleEn           String   @default("")
   roleAr            String
   roleEn            String
+  posterSubtitleAr  String   @default("")
   image             String
   badgeAr           String
+  badgeEn           String   @default("")
   specialtiesAr     String   // Stored as JSON string
+  specialtiesEn     String   @default("[]") // JSON string
+  instagram         String   @default("")
   instagramUrl      String
+  whatsappMessage   String   @default("")
   whatsappMessageAr String
   order             Int      @default(0)
 }
