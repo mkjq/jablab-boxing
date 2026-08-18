@@ -1,11 +1,13 @@
-"use client";
-
 import React from "react";
 import { Trophy } from "lucide-react";
-import { coaches } from "@/data/coaches";
 import { CoachCard } from "./CoachCard";
+import { prisma } from "@/lib/prisma";
 
-export const CoachesSection: React.FC = () => {
+export const CoachesSection = async () => {
+  const coaches = await prisma.coach.findMany({
+    orderBy: { id: "asc" },
+  });
+
   return (
     <section aria-label="Elite Coaches Roster" className="w-full my-4 px-2">
       {/* Section Header */}
@@ -30,11 +32,10 @@ export const CoachesSection: React.FC = () => {
         {coaches.map((coach) => (
           <CoachCard
             key={coach.id}
-            coach={coach}
+            coach={coach as any}
           />
         ))}
       </div>
-
     </section>
   );
 };
