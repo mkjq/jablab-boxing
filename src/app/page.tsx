@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ClubHeader } from "@/components/header/ClubHeader";
 import { NfcUtilityBar } from "@/components/nfc/NfcUtilityBar";
+import { AiChatButton } from "@/components/chat/AiChatButton";
 import { LinksSection } from "@/components/links/LinksSection";
 import { CoachesSection } from "@/components/coaches/CoachesSection";
 import { LocationHours } from "@/components/location/LocationHours";
@@ -39,6 +40,9 @@ export default function HomePage() {
 
         {/* 2. NFC Smart Utility (Save Contact & Share) */}
         <NfcUtilityBar onOpenShareModal={() => handleOpenModal("qr")} />
+
+        {/* AI Assistant Button */}
+        <AiChatButton />
 
         {/* 3. Primary Linktree Action Buttons */}
         <LinksSection onOpenModal={handleOpenModal} />
