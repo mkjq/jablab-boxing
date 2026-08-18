@@ -63,11 +63,32 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
 
       if (!response.ok) throw new Error("API Error");
       
-      const data = await response.json();
-      setMessages([...newMessages, { role: "assistant", content: data.reply }]);
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No stream available");
+      
+      const decoder = new TextDecoder("utf-8");
+      let assistantMessage = "";
+      
+      // Add empty message placeholder
+      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+      setIsLoading(false); // Stop loading spinner since stream started
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value, { stream: true });
+        assistantMessage += chunk;
+        
+        // Update the last message
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: "assistant", content: assistantMessage };
+          return updated;
+        });
+      }
     } catch (error) {
-      setMessages([...newMessages, { role: "assistant", content: "عذراً، حدث خطأ في الاتصال. حاول مرة أخرى." }]);
-    } finally {
+      setMessages((prev) => [...prev, { role: "assistant", content: "عذراً، حدث خطأ في الاتصال. حاول مرة أخرى." }]);
       setIsLoading(false);
     }
   };

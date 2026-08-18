@@ -38,10 +38,10 @@ export async function POST(req: Request) {
         "X-Title": "Jab Lab Website", // Optional, for OpenRouter analytics
       },
       body: JSON.stringify({
-        model: "deepseek/deepseek-chat", // DeepSeek V3
+        model: "deepseek/deepseek-chat", // DeepSeek V3 (fastest and cheapest)
         messages: formattedMessages,
         temperature: 0.5,
-        max_tokens: 500,
+        stream: true,
       }),
     });
 
@@ -49,8 +49,54 @@ export async function POST(req: Request) {
       throw new Error("Failed to fetch from OpenRouter");
     }
 
-    const data = await response.json();
-    return NextResponse.json({ reply: data.choices[0].message.content });
+    // Parse SSE stream from OpenRouter and return raw text stream to client
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+    
+    const stream = new ReadableStream({
+      async start(controller) {
+        if (!response.body) {
+          controller.close();
+          return;
+        }
+        
+        const reader = response.body.getReader();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          // Keep the last incomplete line in the buffer
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('data: ') && trimmed !== 'data: [DONE]') {
+              try {
+                const data = JSON.parse(trimmed.slice(6));
+                const content = data.choices[0]?.delta?.content;
+                if (content) {
+                  controller.enqueue(encoder.encode(content));
+                }
+              } catch (e) {
+                // Ignore incomplete JSON chunks
+              }
+            }
+          }
+        }
+        controller.close();
+      }
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+      },
+    });
     
   } catch (error) {
     console.error("Chat API Error:", error);
