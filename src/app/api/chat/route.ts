@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 const SYSTEM_PROMPT = `أنت مساعد ذكي مخصص لنادي "جاب لاب للملاكمة" (Jab Lab Boxing Club) في الأردن.
 دورك هو الرد على استفسارات المشتركين والزوار بأسلوب محترم، ودود، وباللهجة الأردنية أو العربية الفصحى المبسطة.
 

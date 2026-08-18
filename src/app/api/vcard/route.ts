@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { clubInfo } from "@/data/clubData";
 import { generateClubVCard } from "@/lib/vcard";
 
+export const runtime = 'edge';
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const siteUrl = origin || "https://jablabboxing.com";
