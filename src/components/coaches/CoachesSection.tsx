@@ -10,15 +10,19 @@ export const CoachesSection = () => {
   const [coaches, setCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchCoaches = async () => {
       try {
         const res = await getCoaches();
         if (res.success && res.coaches) {
           setCoaches(res.coaches);
+        } else {
+          setError(res.error || "Unknown error occurred");
         }
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        setError(err?.message || String(err));
       } finally {
         setLoading(false);
       }
@@ -49,6 +53,14 @@ export const CoachesSection = () => {
       {loading ? (
         <div className="flex justify-center p-8">
           <Loader2 className="w-6 h-6 animate-spin text-red-500" />
+        </div>
+      ) : error ? (
+        <div className="p-4 bg-red-500/10 border border-red-500 text-red-500 rounded-xl text-center text-sm">
+          {error}
+        </div>
+      ) : coaches.length === 0 ? (
+        <div className="p-4 bg-zinc-900 border border-zinc-800 text-zinc-400 rounded-xl text-center text-sm">
+          لا يوجد مدربين متاحين حالياً
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2.5 sm:gap-3">

@@ -1,5 +1,7 @@
 "use server";
 
+export const runtime = 'edge';
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -9,8 +11,8 @@ export async function getCoaches() {
       orderBy: { id: "asc" }
     });
     return { success: true, coaches };
-  } catch (error) {
-    return { success: false, error: "Failed to fetch coaches" };
+  } catch (error: any) {
+    return { success: false, error: "Failed to fetch coaches: " + (error?.message || String(error)) };
   }
 }
 
