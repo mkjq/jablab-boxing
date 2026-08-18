@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         "X-Title": "Jab Lab Website", // Optional, for OpenRouter analytics
       },
       body: JSON.stringify({
-        model: "qwen/qwen-2.5-72b-instruct:free", // Qwen 2.5 (Fast and Free)
+        model: "deepseek/deepseek-chat", // DeepSeek V3 (fastest and cheapest)
         messages: formattedMessages,
         temperature: 0.5,
         stream: true,
@@ -46,7 +46,9 @@ export async function POST(req: Request) {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch from OpenRouter");
+      const errText = await response.text();
+      console.error("OpenRouter Error:", errText);
+      throw new Error("Failed to fetch from OpenRouter: " + errText);
     }
 
     // Parse SSE stream from OpenRouter and return raw text stream to client
