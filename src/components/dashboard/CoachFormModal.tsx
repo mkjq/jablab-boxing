@@ -47,8 +47,8 @@ export const CoachFormModal: React.FC<Props> = ({ coach, onClose, onSaved }) => 
     // Parse comma-separated specialties back to JSON string
     const dataToSave = {
       ...formData,
-      specialtiesEn: JSON.stringify(formData.specialtiesEn.split(",").map(s => s.trim()).filter(Boolean)),
-      specialtiesAr: JSON.stringify(formData.specialtiesAr.split(",").map(s => s.trim()).filter(Boolean)),
+      specialtiesEn: JSON.stringify(formData.specialtiesEn.split(",").map((s: string) => s.trim()).filter(Boolean)),
+      specialtiesAr: JSON.stringify(formData.specialtiesAr.split(",").map((s: string) => s.trim()).filter(Boolean)),
     };
 
     if (isEditing) {
