@@ -1,12 +1,25 @@
-import React from "react";
-import { Trophy } from "lucide-react";
-import { CoachCard } from "./CoachCard";
-import { prisma } from "@/lib/prisma";
+"use client";
 
-export const CoachesSection = async () => {
-  const coaches = await prisma.coach.findMany({
-    orderBy: { id: "asc" },
-  });
+import React, { useEffect, useState } from "react";
+import { Trophy, Loader2 } from "lucide-react";
+import { CoachCard } from "./CoachCard";
+import { getCoaches } from "@/app/actions/coaches";
+import { Coach } from "@prisma/client";
+
+export const CoachesSection = () => {
+  const [coaches, setCoaches] = useState<Coach[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCoaches = async () => {
+      const res = await getCoaches();
+      if (res.success && res.coaches) {
+        setCoaches(res.coaches);
+      }
+      setLoading(false);
+    };
+    fetchCoaches();
+  }, []);
 
   return (
     <section aria-label="Elite Coaches Roster" className="w-full my-4 px-2">
@@ -28,14 +41,20 @@ export const CoachesSection = async () => {
       </div>
 
       {/* 2x2 Responsive Grid */}
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-        {coaches.map((coach) => (
-          <CoachCard
-            key={coach.id}
-            coach={coach as any}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex justify-center p-8">
+          <Loader2 className="w-6 h-6 animate-spin text-red-500" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+          {coaches.map((coach) => (
+            <CoachCard
+              key={coach.id}
+              coach={coach as any}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
