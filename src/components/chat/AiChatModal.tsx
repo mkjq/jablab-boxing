@@ -118,9 +118,20 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
     // Remove suggestions from text
     text = text.replace(/\[SUGGESTION:\s*(.+?)\]/g, "").trim();
 
+    // Convert **bold** to React nodes
+    const renderBoldText = (str: string) => {
+      const parts = str.split(/(\*\*.*?\*\*)/g);
+      return parts.map((part, index) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={index} className="font-bold text-white">{part.slice(2, -2)}</strong>;
+        }
+        return <span key={index}>{part}</span>;
+      });
+    };
+
     return (
       <div className="space-y-3">
-        {text && <p className="whitespace-pre-wrap">{text}</p>}
+        {text && <p className="whitespace-pre-wrap">{renderBoldText(text)}</p>}
         
         <div className="flex flex-col gap-2">
           {hasWhatsApp && (
