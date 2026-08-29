@@ -19,7 +19,7 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "مرحباً! أنا المساعد الذكي لنادي جاب لاب 🥊. كيف بقدر أساعدك اليوم بخصوص الاشتراكات أو الكباتن أو مواعيدنا؟",
+      content: "مرحباً! أنا المساعد الذكي لنادي جاب لاب 🥊. كيف بقدر أساعدك اليوم؟\n\n[SUGGESTION: كم أسعار الاشتراكات؟]\n[SUGGESTION: من هم كباتن النادي؟]\n[SUGGESTION: أريد التواصل مع الإدارة]",
     },
   ]);
   const [input, setInput] = useState("");
@@ -43,14 +43,11 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
 
   if (!isOpen) return null;
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || isLoading) return;
 
-    const userMessage = input.trim();
     setInput("");
-    
-    const newMessages = [...messages, { role: "user" as const, content: userMessage }];
+    const newMessages = [...messages, { role: "user" as const, content: text.trim() }];
     setMessages(newMessages);
     setIsLoading(true);
 
@@ -69,9 +66,8 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
       const decoder = new TextDecoder("utf-8");
       let assistantMessage = "";
       
-      // Add empty message placeholder
       setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-      setIsLoading(false); // Stop loading spinner since stream started
+      setIsLoading(false);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -80,7 +76,6 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
         const chunk = decoder.decode(value, { stream: true });
         assistantMessage += chunk;
         
-        // Update the last message
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = { role: "assistant", content: assistantMessage };
@@ -93,30 +88,62 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
     }
   };
 
-  // Helper to render message content and inject WhatsApp button if tag is present
-  const renderContent = (content: string) => {
-    if (content.includes("[WHATSAPP_BUTTON]")) {
-      const parts = content.split("[WHATSAPP_BUTTON]");
-      const waUrl = formatWhatsAppUrl(clubInfo.phoneRaw, "مرحباً، أحتاج إلى التحدث مع الإدارة لو سمحت.");
-      
-      return (
-        <div className="space-y-3">
-          {parts[0] && <p className="whitespace-pre-wrap">{parts[0]}</p>}
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await sendMessage(input);
+  };
+
+  // Helper to render message content and inject WhatsApp/Suggestion buttons
+  const renderContent = (content: string, isLatest: boolean) => {
+    let text = content;
+    const waUrl = formatWhatsAppUrl(clubInfo.phoneRaw, "مرحباً، أحتاج إلى التحدث مع الإدارة لو سمحت.");
+    
+    const hasWhatsApp = text.includes("[WHATSAPP_BUTTON]");
+    if (hasWhatsApp) {
+      text = text.replace("[WHATSAPP_BUTTON]", "");
+    }
+
+    // Extract suggestions
+    const suggestions: string[] = [];
+    const suggestionRegex = /\[SUGGESTION:\s*(.+?)\]/g;
+    let match;
+    while ((match = suggestionRegex.exec(text)) !== null) {
+      suggestions.push(match[1].trim());
+    }
+    // Remove suggestions from text
+    text = text.replace(/\[SUGGESTION:\s*(.+?)\]/g, "").trim();
+
+    return (
+      <div className="space-y-3">
+        {text && <p className="whitespace-pre-wrap">{text}</p>}
+        
+        {hasWhatsApp && (
           <a
             href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white py-2.5 px-4 rounded-xl font-bold transition-all text-sm w-fit"
+            className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white py-2.5 px-4 rounded-xl font-bold transition-all text-sm w-fit mt-2"
           >
             <MessageCircle className="w-4 h-4" />
             <span>تواصل مع الإدارة عبر الواتساب</span>
           </a>
-          {parts[1] && <p className="whitespace-pre-wrap">{parts[1]}</p>}
-        </div>
-      );
-    }
-    
-    return <p className="whitespace-pre-wrap">{content}</p>;
+        )}
+
+        {isLatest && suggestions.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-red-900/30">
+            {suggestions.map((suggestion, idx) => (
+              <button
+                key={idx}
+                onClick={() => sendMessage(suggestion)}
+                className="bg-red-950/50 hover:bg-red-900/50 border border-red-900/50 text-red-100 text-xs py-1.5 px-3 rounded-lg transition-colors text-right"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -160,7 +187,7 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
                     : "bg-red-950/30 border border-red-900/50 text-zinc-200 rounded-tl-none leading-relaxed"
                 }`}
               >
-                {renderContent(msg.content)}
+                {renderContent(msg.content, idx === messages.length - 1)}
               </div>
 
               {msg.role === "user" && (
