@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { UserPlus, QrCode, Check, Download } from "lucide-react";
+import { QrCode, PhoneCall } from "lucide-react";
 import { clubInfo } from "@/data/clubData";
 import { downloadClubVCard } from "@/lib/vcard";
 
@@ -12,41 +12,22 @@ interface NfcUtilityBarProps {
 export const NfcUtilityBar: React.FC<NfcUtilityBarProps> = ({ onOpenShareModal }) => {
   const [downloaded, setDownloaded] = useState(false);
 
-  const handleDownloadContact = () => {
-    try {
-      // Navigate directly to the vCard API instead of forcing a file download.
-      // Mobile browsers (iOS/Android) will intercept the text/vcard MIME type 
-      // and natively open the "Add to Contacts" screen instead of saving a file.
-      window.location.href = "/api/vcard";
-
-      setDownloaded(true);
-      setTimeout(() => setDownloaded(false), 3000);
-    } catch (e) {
-      console.error("vCard download error:", e);
-    }
+  const handleCall = () => {
+    window.location.href = `tel:${clubInfo.phoneRaw}`;
   };
 
   return (
     <section aria-label="NFC Smart Actions" className="w-full my-2 px-2">
       <div className="grid grid-cols-2 gap-2.5">
-        {/* Save Contact Button */}
+        {/* Call Now Button */}
         <button
           type="button"
-          onClick={handleDownloadContact}
+          onClick={handleCall}
           className="relative group overflow-hidden flex items-center justify-center gap-2 py-3 px-3 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-zinc-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 active:scale-95 transition-all duration-200"
         >
           <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-          {downloaded ? (
-            <>
-              <Check className="w-4 h-4 text-zinc-950 stroke-[3]" />
-              <span className="font-extrabold">تم الحفظ بنجاح!</span>
-            </>
-          ) : (
-            <>
-              <UserPlus className="w-4 h-4 text-zinc-950 stroke-[2.5]" />
-              <span className="font-bold">حفظ جهة الاتصال</span>
-            </>
-          )}
+          <PhoneCall className="w-4 h-4 text-zinc-950 stroke-[2.5]" />
+          <span className="font-bold">اتصال فوري</span>
         </button>
 
         {/* Share QR Code Button */}
