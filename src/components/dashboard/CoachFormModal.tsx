@@ -83,14 +83,7 @@ export const CoachFormModal: React.FC<Props> = ({ coach, onClose, onSaved }) => 
                 <input required name="nameEn" value={formData.nameEn} onChange={handleChange} dir="ltr" className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-red-500 outline-none text-left" />
               </div>
               
-              <div>
-                <label className="block text-xs font-bold text-zinc-400 mb-1">اللقب (عربي)</label>
-                <input required name="titleAr" value={formData.titleAr} onChange={handleChange} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-red-500 outline-none" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-zinc-400 mb-1">اللقب (انجليزي)</label>
-                <input required name="titleEn" value={formData.titleEn} onChange={handleChange} dir="ltr" className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-red-500 outline-none text-left" />
-              </div>
+
 
               <div>
                 <label className="block text-xs font-bold text-zinc-400 mb-1">صورة الكابتن</label>
