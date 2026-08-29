@@ -15,12 +15,17 @@ export default function UsersPage() {
 
   const loadUsers = async () => {
     setLoading(true);
-    const res = await getUsers();
-    if (res.success && res.users) {
-      setUsers(res.users);
-      setError(null);
-    } else {
-      setError(res.error || "خطأ في تحميل المستخدمين");
+    try {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      if (data.success && data.users) {
+        setUsers(data.users);
+        setError(null);
+      } else {
+        setError(data.error || "خطأ في تحميل المستخدمين");
+      }
+    } catch (err) {
+      setError("تعذر تحميل البيانات");
     }
     setLoading(false);
   };

@@ -15,9 +15,14 @@ export default function CoachesPage() {
 
   const fetchCoaches = async () => {
     setIsLoading(true);
-    const res = await getCoaches();
-    if (res.success && res.coaches) {
-      setCoaches(res.coaches);
+    try {
+      const res = await fetch("/api/coaches");
+      const data = await res.json();
+      if (res.ok && data.success && data.coaches) {
+        setCoaches(data.coaches);
+      }
+    } catch (err) {
+      console.error(err);
     }
     setIsLoading(false);
   };
