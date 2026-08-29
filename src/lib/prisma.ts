@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL!;
+  const connectionString = process.env.DATABASE_URL || "postgres://dummy:dummy@dummy.neon.tech/dummy";
   const connection = neon(connectionString);
   const adapter = new PrismaNeonHTTP(connection);
   return new PrismaClient({ adapter } as any);
