@@ -178,7 +178,7 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
             </div>
             <div>
               <h3 className="font-black text-white text-sm">مساعد جاب لاب الذكي</h3>
-              <p className="text-[10px] text-zinc-400 font-medium">مدعوم بـ DeepSeek AI</p>
+              <p className="text-[10px] text-zinc-400 font-medium flex items-center gap-1">متصل الآن</p>
             </div>
           </div>
           <button
