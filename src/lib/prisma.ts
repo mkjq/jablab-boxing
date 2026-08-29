@@ -1,17 +1,13 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { PrismaNeon } from '@prisma/adapter-neon';
+import { neon } from '@neondatabase/serverless';
+import { PrismaNeonHTTP } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
-
-// Enable fetch-based WebSocket for Edge Runtime
-neonConfig.useSecureWebSocket = true;
-neonConfig.fetchConnectionCache = true;
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL!;
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool as any);
+  const connection = neon(connectionString);
+  const adapter = new PrismaNeonHTTP(connection);
   return new PrismaClient({ adapter } as any);
 }
 
