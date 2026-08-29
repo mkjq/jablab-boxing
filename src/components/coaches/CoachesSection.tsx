@@ -14,14 +14,23 @@ export const CoachesSection = () => {
     const fetchCoaches = async () => {
       try {
         const res = await fetch("/api/coaches");
+        
+        // Prevent trying to parse HTML as JSON if Cloudflare throws a 500 page
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Server did not return a valid response (possibly a temporary network glitch)");
+        }
+
         const data = await res.json();
-        if (data.success && data.coaches) {
+        if (res.ok && data.success && data.coaches) {
           setCoaches(data.coaches);
+          setError(null);
         } else {
           setError(data.error || "Unknown error occurred");
         }
       } catch (err: any) {
-        setError(err?.message || String(err));
+        console.error("Coaches fetch error:", err);
+        setError("تعذر تحميل بيانات المدربين، يرجى تحديث الصفحة.");
       } finally {
         setLoading(false);
       }
