@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     status: 200,
     headers: {
       "Content-Type": "text/vcard; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="JabLabBoxing.vcf"',
+      "Content-Disposition": 'inline; filename="JabLabBoxing.vcf"',
       "Cache-Control": "public, max-age=86400",
     },
   });

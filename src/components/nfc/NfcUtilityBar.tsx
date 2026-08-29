@@ -14,13 +14,10 @@ export const NfcUtilityBar: React.FC<NfcUtilityBarProps> = ({ onOpenShareModal }
 
   const handleDownloadContact = () => {
     try {
-      // Trigger client-side direct download or API fallback
-      const link = document.createElement("a");
-      link.href = "/api/vcard";
-      link.download = "JabLabBoxing.vcf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Navigate directly to the vCard API instead of forcing a file download.
+      // Mobile browsers (iOS/Android) will intercept the text/vcard MIME type 
+      // and natively open the "Add to Contacts" screen instead of saving a file.
+      window.location.href = "/api/vcard";
 
       setDownloaded(true);
       setTimeout(() => setDownloaded(false), 3000);
