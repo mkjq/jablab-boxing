@@ -38,4 +38,6 @@ model Coach {
   whatsappMessage   String   @default("")
   whatsappMessageAr String
   order             Int      @default(0)
+  imagePosition     String   @default("center top")
+  imageScale        Float    @default(1.0)
 }

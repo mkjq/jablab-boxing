@@ -44,7 +44,12 @@ export const CoachCard: React.FC<CoachCardProps> = ({ coach }) => {
             alt={coach.nameAr}
             fill
             sizes="(max-width: 640px) 50vw, 220px"
-            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            style={{
+              objectPosition: (coach as any).imagePosition || "center top",
+              transform: `scale(${(coach as any).imageScale || 1})`,
+              transformOrigin: (coach as any).imagePosition || "center top",
+            }}
             onError={() => setImageError(true)}
           />
         ) : (

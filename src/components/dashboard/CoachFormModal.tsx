@@ -33,6 +33,8 @@ export const CoachFormModal: React.FC<Props> = ({ coach, onClose, onSaved }) => 
     badgeAr: coach?.badgeAr || "",
     whatsappMessage: coach?.whatsappMessage || "",
     whatsappMessageAr: coach?.whatsappMessageAr || "",
+    imagePosition: (coach as any)?.imagePosition || "center top",
+    imageScale: (coach as any)?.imageScale ?? 1.0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,6 +119,80 @@ export const CoachFormModal: React.FC<Props> = ({ coach, onClose, onSaved }) => 
               <input type="hidden" name="roleEn" value={formData.roleAr} />
               <input type="hidden" name="specialtiesEn" value={formData.specialtiesAr} />
               <input type="hidden" name="posterSubtitleAr" value={formData.roleAr} />
+
+              {/* Image Position & Scale Controls */}
+              <div className="md:col-span-2 bg-zinc-900 border border-white/10 rounded-2xl p-4">
+                <label className="block text-xs font-bold text-zinc-300 mb-3">🖼️ ضبط الصورة</label>
+                <div className="flex gap-6 items-start flex-wrap">
+                  
+                  {/* Preview */}
+                  <div className="relative w-28 h-28 rounded-xl overflow-hidden bg-zinc-800 flex-shrink-0 border border-white/10">
+                    {formData.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={formData.image}
+                        alt="preview"
+                        className="w-full h-full object-cover"
+                        style={{
+                          objectPosition: formData.imagePosition,
+                          transform: `scale(${formData.imageScale})`,
+                          transformOrigin: formData.imagePosition,
+                        }}
+                      />
+                    )}
+                    <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 rounded">معاينة</div>
+                  </div>
+
+                  <div className="flex-1 space-y-3 min-w-[160px]">
+                    {/* 3x3 Position Grid */}
+                    <div>
+                      <p className="text-[10px] text-zinc-500 mb-1.5">موضع الصورة</p>
+                      <div className="grid grid-cols-3 gap-1 w-fit">
+                        {[
+                          ["right top", "↖"], ["center top", "↑"], ["left top", "↗"],
+                          ["right center", "←"], ["center center", "•"], ["left center", "→"],
+                          ["right bottom", "↙"], ["center bottom", "↓"], ["left bottom", "↘"],
+                        ].map(([pos, icon]) => (
+                          <button
+                            key={pos}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, imagePosition: pos }))}
+                            className={`w-8 h-8 rounded-lg text-sm flex items-center justify-center transition-all ${
+                              formData.imagePosition === pos
+                                ? "bg-red-600 text-white"
+                                : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                            }`}
+                          >
+                            {icon}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Scale Slider */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-[10px] text-zinc-500">التكبير</p>
+                        <span className="text-[10px] text-red-400 font-bold">{Number(formData.imageScale).toFixed(1)}x</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="1"
+                        max="2"
+                        step="0.05"
+                        value={formData.imageScale}
+                        onChange={(e) => setFormData(prev => ({ ...prev, imageScale: parseFloat(e.target.value) }))}
+                        className="w-full accent-red-500"
+                      />
+                      <div className="flex justify-between text-[9px] text-zinc-600 mt-0.5">
+                        <span>1x طبيعي</span>
+                        <span>2x تكبير</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </form>
         </div>
