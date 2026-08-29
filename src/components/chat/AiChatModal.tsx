@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Bot, User, Send, Loader2, MessageCircle } from "lucide-react";
+import { X, Bot, User, Send, Loader2, MessageCircle, MapPin } from "lucide-react";
 import { clubInfo } from "@/data/clubData";
 import { formatWhatsAppUrl } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "مرحباً! أنا المساعد الذكي لنادي جاب لاب 🥊. كيف بقدر أساعدك اليوم؟\n\n[SUGGESTION: كم أسعار الاشتراكات؟]\n[SUGGESTION: من هم كباتن النادي؟]\n[SUGGESTION: أريد التواصل مع الإدارة]",
+      content: "مرحباً! أنا المساعد الذكي لنادي جاب لاب 🥊. كيف بقدر أساعدك اليوم؟\n\n[SUGGESTION: كم أسعار الاشتراكات؟]\n[SUGGESTION: من هم كباتن النادي؟]\n[SUGGESTION: أين يقع النادي؟]",
     },
   ]);
   const [input, setInput] = useState("");
@@ -93,7 +93,7 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
     await sendMessage(input);
   };
 
-  // Helper to render message content and inject WhatsApp/Suggestion buttons
+  // Helper to render message content and inject WhatsApp/Map/Suggestion buttons
   const renderContent = (content: string, isLatest: boolean) => {
     let text = content;
     const waUrl = formatWhatsAppUrl(clubInfo.phoneRaw, "مرحباً، أحتاج إلى التحدث مع الإدارة لو سمحت.");
@@ -101,6 +101,11 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
     const hasWhatsApp = text.includes("[WHATSAPP_BUTTON]");
     if (hasWhatsApp) {
       text = text.replace("[WHATSAPP_BUTTON]", "");
+    }
+
+    const hasMap = text.includes("[MAP_BUTTON]");
+    if (hasMap) {
+      text = text.replace("[MAP_BUTTON]", "");
     }
 
     // Extract suggestions
@@ -117,17 +122,31 @@ export const AiChatModal: React.FC<AiChatModalProps> = ({ isOpen, onClose }) => 
       <div className="space-y-3">
         {text && <p className="whitespace-pre-wrap">{text}</p>}
         
-        {hasWhatsApp && (
-          <a
-            href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white py-2.5 px-4 rounded-xl font-bold transition-all text-sm w-fit mt-2"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>تواصل مع الإدارة عبر الواتساب</span>
-          </a>
-        )}
+        <div className="flex flex-col gap-2">
+          {hasWhatsApp && (
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white py-2.5 px-4 rounded-xl font-bold transition-all text-sm w-fit mt-2"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>تواصل مع الإدارة عبر الواتساب</span>
+            </a>
+          )}
+          
+          {hasMap && (
+            <a
+              href={clubInfo.mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white py-2.5 px-4 rounded-xl font-bold transition-all text-sm w-fit mt-1"
+            >
+              <MapPin className="w-4 h-4" />
+              <span>افتح الموقع على خرائط جوجل</span>
+            </a>
+          )}
+        </div>
 
         {isLatest && suggestions.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-red-900/30">
