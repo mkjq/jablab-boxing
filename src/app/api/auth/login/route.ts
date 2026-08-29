@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "بيانات الدخول غير صحيحة" }, { status: 401 });
     }
 
-    await setSession(admin.id);
+    await setSession(admin.id, admin.role);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: "حدث خطأ في الخادم" }, { status: 500 });

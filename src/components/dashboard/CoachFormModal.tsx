@@ -93,8 +93,22 @@ export const CoachFormModal: React.FC<Props> = ({ coach, onClose, onSaved }) => 
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-zinc-400 mb-1">رابط الصورة (مسار)</label>
-                <input required name="image" value={formData.image} onChange={handleChange} dir="ltr" placeholder="/images/coaches/..." className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-red-500 outline-none text-left" />
+                <label className="block text-xs font-bold text-zinc-400 mb-1">صورة الكابتن</label>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setFormData(prev => ({ ...prev, image: reader.result as string }));
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }} 
+                  className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-red-500/10 file:text-red-500 hover:file:bg-red-500/20" 
+                />
               </div>
               <div>
                 <label className="block text-xs font-bold text-zinc-400 mb-1">يوزر الانستقرام (بدون @)</label>

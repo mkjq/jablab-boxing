@@ -1,13 +1,25 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Settings, LogOut, Key } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (pathname !== "/gsg/login") {
+      fetch("/api/auth/me")
+        .then(res => res.json())
+        .then(data => {
+          if (data.authenticated) setRole(data.role);
+        })
+        .catch(console.error);
+    }
+  }, [pathname]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -24,6 +36,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     { href: "/gsg/coaches", label: "الكباتن", icon: Users },
     { href: "/gsg/settings", label: "الإعدادات", icon: Settings },
   ];
+
+  if (role === "SUPER_ADMIN") {
+    links.push({ href: "/gsg/users", label: "إدارة المستخدمين", icon: Key });
+  }
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col md:flex-row" dir="rtl">
