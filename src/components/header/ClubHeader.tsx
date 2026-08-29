@@ -65,7 +65,7 @@ export const ClubHeader: React.FC<ClubHeaderProps> = ({ onOpenShareModal }) => {
       </div>
 
       {/* Quick Action Floating Bar */}
-      <QuickActionBar onOpenShareModal={onOpenShareModal} />
+      <QuickActionBar />
     </header>
   );
 };

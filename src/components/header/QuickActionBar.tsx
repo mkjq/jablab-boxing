@@ -1,25 +1,12 @@
 "use client";
 
 import React from "react";
-import { Phone, MessageCircle, MapPin, Instagram, Share2 } from "lucide-react";
+import { MessageCircle, MapPin, Instagram } from "lucide-react";
 import { clubInfo } from "@/data/clubData";
 import { formatTelUrl, formatWhatsAppUrl } from "@/lib/utils";
 
-interface QuickActionBarProps {
-  onOpenShareModal: () => void;
-}
-
-export const QuickActionBar: React.FC<QuickActionBarProps> = ({ onOpenShareModal }) => {
+export const QuickActionBar: React.FC = () => {
   const quickActions = [
-    {
-      id: "call",
-      name: "Call Club",
-      nameAr: "اتصال",
-      href: formatTelUrl(clubInfo.phoneRaw),
-      icon: Phone,
-      color: "hover:text-emerald-400 hover:border-emerald-500/40 hover:bg-emerald-500/10",
-      ariaLabel: "Call Jab Lab Boxing Club",
-    },
     {
       id: "whatsapp",
       name: "WhatsApp",
@@ -53,7 +40,7 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({ onOpenShareModal
   ];
 
   return (
-    <div className="flex items-center justify-center gap-3 w-full max-w-sm mx-auto my-3 px-2">
+    <div className="flex items-center justify-center gap-4 w-full max-w-sm mx-auto my-3 px-2">
       {quickActions.map((action) => (
         <a
           key={action.id}
@@ -61,26 +48,14 @@ export const QuickActionBar: React.FC<QuickActionBarProps> = ({ onOpenShareModal
           target={action.isExternal ? "_blank" : undefined}
           rel={action.isExternal ? "noopener noreferrer" : undefined}
           aria-label={action.ariaLabel}
-          className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-jab-card/90 border border-white/10 backdrop-blur-md text-zinc-300 transition-all duration-200 active:scale-90 shadow-md ${action.color}`}
+          className={`flex flex-col items-center justify-center flex-1 h-16 rounded-2xl bg-jab-card/90 border border-white/10 backdrop-blur-md text-zinc-300 transition-all duration-200 active:scale-95 shadow-md ${action.color}`}
         >
-          <action.icon className="w-5 h-5 mb-0.5" />
-          <span className="text-[10px] font-medium tracking-tight text-zinc-400">
+          <action.icon className="w-6 h-6 mb-1" />
+          <span className="text-xs font-medium tracking-tight text-zinc-400">
             {action.nameAr}
           </span>
         </a>
       ))}
-
-      <button
-        type="button"
-        onClick={onOpenShareModal}
-        aria-label="Share Jab Lab profile or QR code"
-        className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-jab-card/90 border border-white/10 backdrop-blur-md text-zinc-300 hover:text-amber-400 hover:border-amber-500/40 hover:bg-amber-500/10 transition-all duration-200 active:scale-90 shadow-md"
-      >
-        <Share2 className="w-5 h-5 mb-0.5" />
-        <span className="text-[10px] font-medium tracking-tight text-zinc-400">
-          مشاركة
-        </span>
-      </button>
     </div>
   );
 };
