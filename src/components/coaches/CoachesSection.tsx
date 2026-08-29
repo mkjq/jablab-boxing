@@ -3,11 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { Trophy, Loader2 } from "lucide-react";
 import { CoachCard } from "./CoachCard";
-import { getCoaches } from "@/app/actions/coaches";
-import { Coach } from "@prisma/client";
 
 export const CoachesSection = () => {
-  const [coaches, setCoaches] = useState<Coach[]>([]);
+  const [coaches, setCoaches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState<string | null>(null);
@@ -15,11 +13,12 @@ export const CoachesSection = () => {
   useEffect(() => {
     const fetchCoaches = async () => {
       try {
-        const res = await getCoaches();
-        if (res.success && res.coaches) {
-          setCoaches(res.coaches);
+        const res = await fetch("/api/coaches");
+        const data = await res.json();
+        if (data.success && data.coaches) {
+          setCoaches(data.coaches);
         } else {
-          setError(res.error || "Unknown error occurred");
+          setError(data.error || "Unknown error occurred");
         }
       } catch (err: any) {
         setError(err?.message || String(err));
