@@ -12,6 +12,7 @@ interface TrialModalProps {
 
 export const TrialModal: React.FC<TrialModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
+  const [age, setAge] = useState("");
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [level, setLevel] = useState("beginner");
@@ -55,7 +56,7 @@ export const TrialModal: React.FC<TrialModalProps> = ({ isOpen, onClose }) => {
         ? "متوسط / لدي خبرة سابقة"
         : "متقدم / رياضي";
 
-    const msg = `مرحباً نادي جاب لاب، أود حجز حصة تجريبية مجانية:\n• الاسم: ${name || "غير محدد"}\n• الهاتف: ${phone || "غير محدد"}\n• المستوى: ${levelText}`;
+    const msg = `مرحباً نادي جاب لاب، أود حجز حصة تجريبية مجانية:\n• الاسم: ${name || "غير محدد"}\n• العمر: ${age || "غير محدد"}\n• الهاتف: ${phone || "غير محدد"}\n• المستوى: ${levelText}`;
     const waUrl = formatWhatsAppUrl(clubInfo.phoneRaw, msg);
     window.open(waUrl, "_blank");
     onClose();
@@ -116,20 +117,35 @@ export const TrialModal: React.FC<TrialModalProps> = ({ isOpen, onClose }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3 mt-2">
-          <div>
-            <label className="block text-xs font-bold text-zinc-300 mb-1">
-              الاسم الكامل
-            </label>
-            <div className="relative">
+          <div className="flex gap-2">
+            <div className="flex-[2]">
+              <label className="block text-xs font-bold text-zinc-300 mb-1">
+                الاسم
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="أدخل اسمك..."
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full py-2.5 px-3 ps-9 rounded-xl bg-zinc-900 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-red-500 transition-colors text-right"
+                />
+                <User className="w-4 h-4 text-zinc-500 absolute top-3 left-3" />
+              </div>
+            </div>
+            <div className="flex-[1]">
+              <label className="block text-xs font-bold text-zinc-300 mb-1 text-center">
+                العمر
+              </label>
               <input
-                type="text"
-                placeholder="أدخل اسمك الكريم..."
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                type="tel"
+                placeholder="25"
+                value={age}
+                onChange={(e) => setAge(e.target.value.replace(/\D/g, "").slice(0, 3))}
                 required
-                className="w-full py-2.5 px-3 ps-9 rounded-xl bg-zinc-900 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-red-500 transition-colors text-right"
+                className="w-full py-2.5 px-3 rounded-xl bg-zinc-900 border border-white/10 text-white placeholder-zinc-500 text-xs focus:outline-none focus:border-red-500 transition-colors text-center"
               />
-              <User className="w-4 h-4 text-zinc-500 absolute top-3 left-3" />
             </div>
           </div>
 

@@ -25,7 +25,7 @@ export const AmenitiesGrid: React.FC = () => {
   };
 
   return (
-    <section aria-label="Gym Amenities" className="w-full my-4 px-2">
+    <section aria-label="Gym Amenities" className="w-full">
       <div className="flex items-center justify-between mb-3 px-1">
         <h3 className="text-sm font-black text-white">تجهيزات ومرافق جاب لاب</h3>
         <span className="text-[10px] text-zinc-500 font-english uppercase tracking-wider">
@@ -33,7 +33,7 @@ export const AmenitiesGrid: React.FC = () => {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {clubInfo.amenities.map((item) => (
           <div
             key={item.id}

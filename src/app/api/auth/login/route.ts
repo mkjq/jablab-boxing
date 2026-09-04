@@ -25,6 +25,7 @@ export async function POST(request: Request) {
     await setSession(admin.id, admin.role);
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error("Login API Error:", error);
     return NextResponse.json({ error: "حدث خطأ في الخادم" }, { status: 500 });
   }
 }

@@ -21,7 +21,7 @@ export const LocationHours: React.FC = () => {
   }, []);
 
   return (
-    <section aria-label="Location and Working Hours" className="w-full my-4 px-2">
+    <section aria-label="Location and Working Hours" className="w-full">
       <div className="rounded-2xl bg-jab-card/90 border border-white/10 p-4 shadow-lg backdrop-blur-md">
         {/* Status Header */}
         <div className="flex items-center justify-between pb-3 border-b border-white/10">

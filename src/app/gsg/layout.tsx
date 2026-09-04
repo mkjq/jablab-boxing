@@ -3,7 +3,7 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, Settings, LogOut, Key } from "lucide-react";
+import { LayoutDashboard, Users, Settings, LogOut, Key, Calendar, DollarSign, Dumbbell, Link as LinkIcon } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -33,8 +33,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   const links = [
     { href: "/gsg", label: "الرئيسية", icon: LayoutDashboard },
+    { href: "/gsg/settings", label: "الإعدادات العامة", icon: Settings },
     { href: "/gsg/coaches", label: "الكباتن", icon: Users },
-    { href: "/gsg/settings", label: "الإعدادات", icon: Settings },
+    { href: "/gsg/schedule", label: "جدول الحصص", icon: Calendar },
+    { href: "/gsg/pricing", label: "الاشتراكات", icon: DollarSign },
+    { href: "/gsg/amenities", label: "المرافق", icon: Dumbbell },
+    { href: "/gsg/action-links", label: "الأزرار السريعة", icon: LinkIcon },
   ];
 
   if (role === "SUPER_ADMIN") {

@@ -47,4 +47,92 @@ model Coach {
   order             Int      @default(0)
   imagePosition     String   @default("center top")
   imageScale        Float    @default(1.0)
+  classSessions     ClassSession[]
+}
+
+model ClubSettings {
+  id              String @id @default("global")
+  nameEn          String
+  nameAr          String
+  shortName       String
+  taglineEn       String
+  taglineAr       String
+  descriptionEn   String
+  descriptionAr   String
+  locationEn      String
+  locationAr      String
+  addressEn       String
+  addressAr       String
+  phone           String
+  phoneRaw        String
+  whatsapp        String
+  email           String
+  instagram       String
+  instagramUrl    String
+  tiktok          String
+  tiktokUrl       String
+  mapUrl          String
+  
+  weekdaysEn      String
+  weekdaysAr      String
+  fridayEn        String
+  fridayAr        String
+  openTime        Int
+  closeTime       Int
+}
+
+model Amenity {
+  id              String @id @default(uuid())
+  nameEn          String
+  nameAr          String
+  icon            String
+  descEn          String
+  descAr          String
+  order           Int    @default(0)
+}
+
+model PricingTier {
+  id              String @id @default(uuid())
+  titleEn         String
+  titleAr         String
+  price           String
+  currency        String @default("JOD")
+  periodEn        String
+  periodAr        String
+  popular         Boolean @default(false)
+  badge           String  @default("")
+  featuresEn      String  // JSON array string
+  featuresAr      String  // JSON array string
+  whatsappText    String
+  order           Int    @default(0)
+}
+
+model ClassSession {
+  id              String @id @default(uuid())
+  day             String // "sat", "sun", "mon" etc
+  time            String
+  titleEn         String
+  titleAr         String
+  category        String
+  levelEn         String
+  levelAr         String
+  coachId         String
+  coach           Coach  @relation(fields: [coachId], references: [id])
+  order           Int    @default(0)
+}
+
+model ActionLink {
+  id              String @id @default(uuid())
+  titleEn         String
+  titleAr         String
+  subtitleEn      String
+  subtitleAr      String
+  icon            String
+  badge           String @default("")
+  badgeColor      String @default("")
+  actionType      String
+  modalId         String @default("")
+  href            String @default("")
+  highlight       Boolean @default(false)
+  order           Int    @default(0)
 }

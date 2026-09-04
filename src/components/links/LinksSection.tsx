@@ -10,7 +10,7 @@ interface LinksSectionProps {
 
 export const LinksSection: React.FC<LinksSectionProps> = ({ onOpenModal }) => {
   return (
-    <section aria-label="Quick Actions & Services" className="w-full my-3 px-2 flex flex-col gap-2.5">
+    <section aria-label="Quick Actions & Services" className="w-full my-3 px-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       {actionLinks.map((link) => (
         <LinkCard key={link.id} link={link} onOpenModal={onOpenModal} />
       ))}

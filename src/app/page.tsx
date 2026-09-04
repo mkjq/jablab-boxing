@@ -34,7 +34,7 @@ export default function HomePage() {
       </div>
 
       {/* Main Responsive Mobile-First Container */}
-      <main className="relative z-10 w-full max-w-md mx-auto min-h-screen px-3 py-4 sm:py-6 flex flex-col items-center">
+      <main className="relative z-10 w-full max-w-md md:max-w-3xl lg:max-w-5xl mx-auto min-h-screen px-3 py-4 sm:py-6 flex flex-col items-center">
         {/* 1. Header & Quick Actions */}
         <ClubHeader onOpenShareModal={() => handleOpenModal("qr")} />
 
@@ -51,8 +51,14 @@ export default function HomePage() {
         <CoachesSection />
 
         {/* 5. Location, Live Hours & Gym Amenities */}
-        <LocationHours />
-        <AmenitiesGrid />
+        <div className="w-full flex flex-col md:flex-row gap-2 md:gap-4 items-start my-4 px-2">
+          <div className="w-full md:w-1/3">
+            <LocationHours />
+          </div>
+          <div className="w-full md:w-2/3 mt-2 md:mt-0">
+            <AmenitiesGrid />
+          </div>
+        </div>
 
         {/* 6. Footer & Brand Watermark */}
         <ClubFooter />
