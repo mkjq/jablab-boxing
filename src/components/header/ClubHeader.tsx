@@ -55,7 +55,6 @@ export const ClubHeader: React.FC<ClubHeaderProps> = ({ onOpenShareModal }) => {
       {/* Tagline & Badges */}
       <div className="flex flex-wrap items-center justify-center gap-2 mt-2">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-950/60 text-red-300 border border-red-500/30 backdrop-blur-md">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           <span>{clubInfo.taglineAr}</span>
         </span>
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-900/80 text-zinc-300 border border-white/10 backdrop-blur-md">

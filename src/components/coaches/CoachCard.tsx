@@ -62,7 +62,6 @@ export const CoachCard: React.FC<CoachCardProps> = ({ coach }) => {
         {/* Role Pill Badge */}
         <div className="absolute top-2 right-2 z-20">
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-red-600/90 text-white backdrop-blur-md shadow-md border border-red-400/30">
-            <Sparkles className="w-2.5 h-2.5 text-amber-300" />
             <span>{coach.badgeAr}</span>
           </span>
         </div>

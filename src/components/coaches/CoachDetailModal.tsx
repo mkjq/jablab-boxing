@@ -72,7 +72,6 @@ export const CoachDetailModal: React.FC<CoachDetailModalProps> = ({ coach, onClo
           {/* Badge & Title */}
           <div className="absolute bottom-3 right-4 left-4">
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-600 text-white shadow-md mb-1.5">
-              <Sparkles className="w-3 h-3 text-amber-300" />
               <span>{coach.badgeAr}</span>
             </span>
             <h2 id="coach-modal-title" className="text-xl sm:text-2xl font-black text-white">

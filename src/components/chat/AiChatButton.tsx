@@ -16,7 +16,6 @@ export const AiChatButton: React.FC = () => {
       >
         <div className="absolute inset-0 bg-red-600/20 rounded-full animate-ping opacity-75" />
         <Bot className="w-6 h-6 relative z-10 group-hover:text-red-400 transition-colors" />
-        <Sparkles className="w-3 h-3 text-yellow-400 absolute top-3 right-3 z-10 animate-pulse" />
       </button>
 
       <AiChatModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
