@@ -10,8 +10,59 @@ interface ScheduleModalProps {
   onClose: () => void;
 }
 
+const DAYS_META: { [key: string]: { dayEn: string; dayAr: string } } = {
+  sat: { dayEn: "Saturday", dayAr: "السبت" },
+  sun: { dayEn: "Sunday", dayAr: "الأحد" },
+  mon: { dayEn: "Monday", dayAr: "الإثنين" },
+  tue: { dayEn: "Tuesday", dayAr: "الثلاثاء" },
+  wed: { dayEn: "Wednesday", dayAr: "الأربعاء" },
+  thu: { dayEn: "Thursday", dayAr: "الخميس" },
+  fri: { dayEn: "Friday", dayAr: "الجمعة" },
+};
+
 export const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose }) => {
   const [selectedDayId, setSelectedDayId] = useState(scheduleData[0].id);
+  const [days, setDays] = useState<any[]>(scheduleData);
+
+  useEffect(() => {
+    fetch("/api/schedule")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.schedule && data.schedule.length > 0) {
+          // Group sessions by day
+          const dayMap: { [key: string]: any[] } = {};
+          data.schedule.forEach((s: any) => {
+            if (!dayMap[s.day]) dayMap[s.day] = [];
+            dayMap[s.day].push({
+              time: s.time,
+              titleEn: s.titleEn,
+              titleAr: s.titleAr,
+              category: s.category,
+              levelEn: s.levelEn,
+              levelAr: s.levelAr,
+              coachNameAr: s.coach?.nameAr || "",
+              coachNameEn: s.coach?.nameEn || "",
+            });
+          });
+
+          const dayOrder = ["sat", "sun", "mon", "tue", "wed", "thu", "fri"];
+          const formattedDays = dayOrder
+            .filter((dId) => dayMap[dId] && dayMap[dId].length > 0)
+            .map((dId) => ({
+              id: dId,
+              dayEn: DAYS_META[dId]?.dayEn || dId,
+              dayAr: DAYS_META[dId]?.dayAr || dId,
+              sessions: dayMap[dId],
+            }));
+
+          if (formattedDays.length > 0) {
+            setDays(formattedDays);
+            setSelectedDayId(formattedDays[0].id);
+          }
+        }
+      })
+      .catch((err) => console.error("Schedule fetch error:", err));
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -34,7 +85,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose })
 
   if (!isOpen) return null;
 
-  const currentDay = scheduleData.find((d) => d.id === selectedDayId) || scheduleData[0];
+  const currentDay = days.find((d) => d.id === selectedDayId) || days[0];
 
   return (
     <div
@@ -76,7 +127,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose })
 
         {/* Day Selector Tabs (Horizontal Scroll) */}
         <div className="p-2 border-b border-zinc-800/60 bg-zinc-950 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          {scheduleData.map((day) => (
+          {days.map((day) => (
             <button
               key={day.id}
               type="button"

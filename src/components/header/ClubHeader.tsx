@@ -11,6 +11,27 @@ interface ClubHeaderProps {
 }
 
 export const ClubHeader: React.FC<ClubHeaderProps> = ({ onOpenShareModal }) => {
+  const [info, setInfo] = React.useState(clubInfo);
+
+  React.useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.nameAr) {
+          setInfo((prev) => ({
+            ...prev,
+            nameAr: data.nameAr,
+            nameEn: data.nameEn,
+            taglineAr: data.taglineAr,
+            taglineEn: data.taglineEn,
+            locationAr: data.locationAr,
+            locationEn: data.locationEn,
+          }));
+        }
+      })
+      .catch((err) => console.error("ClubHeader settings fetch error:", err));
+  }, []);
+
   return (
     <header className="flex flex-col items-center text-center pt-2 pb-1 px-4 relative z-10">
       {/* Glowing Logo Container */}
@@ -45,21 +66,21 @@ export const ClubHeader: React.FC<ClubHeaderProps> = ({ onOpenShareModal }) => {
       {/* Club Title (Bilingual) */}
       <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center justify-center gap-2">
         <span className="bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent">
-          {clubInfo.nameAr}
+          {info.nameAr}
         </span>
       </h1>
       <p className="text-xs sm:text-sm font-extrabold tracking-widest text-red-500 uppercase mt-0.5 font-english">
-        {clubInfo.nameEn}
+        {info.nameEn}
       </p>
 
       {/* Tagline & Badges */}
       <div className="flex flex-wrap items-center justify-center gap-2 mt-2">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-950/60 text-red-300 border border-red-500/30 backdrop-blur-md">
-          <span>{clubInfo.taglineAr}</span>
+          <span>{info.taglineAr}</span>
         </span>
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-zinc-900/80 text-zinc-300 border border-white/10 backdrop-blur-md">
-          <MapPin className="w-3 h-3 text-red-400" />
-          <span>{clubInfo.locationAr}</span>
+          <MapPin className="w-3.5 h-3.5 text-red-500" />
+          <span>{info.locationAr}</span>
         </span>
       </div>
 

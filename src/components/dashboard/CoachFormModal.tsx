@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Coach } from "@prisma/client";
 import { X, Loader2 } from "lucide-react";
-import { createCoach, updateCoach } from "@/app/actions/coaches";
 
 interface Props {
   coach: Coach | null;
@@ -53,14 +52,28 @@ export const CoachFormModal: React.FC<Props> = ({ coach, onClose, onSaved }) => 
       specialtiesAr: JSON.stringify(formData.specialtiesAr.split(",").map((s: string) => s.trim()).filter(Boolean)),
     };
 
-    if (isEditing) {
-      await updateCoach(coach.id, dataToSave);
-    } else {
-      await createCoach(dataToSave);
+    try {
+      const url = isEditing ? `/api/coaches/${coach.id}` : "/api/coaches";
+      const method = isEditing ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataToSave),
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        onSaved();
+      } else {
+        alert("حدث خطأ أثناء حفظ بيانات الكابتن: " + (json.error || "يرجى المحاولة مرة أخرى"));
+      }
+    } catch (err) {
+      console.error("Save coach error:", err);
+      alert("حدث خطأ أثناء الاتصال بالخادم، يرجى المحاولة مرة أخرى.");
+    } finally {
+      setIsSaving(false);
     }
-    
-    setIsSaving(false);
-    onSaved();
   };
 
   return (

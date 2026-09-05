@@ -48,3 +48,36 @@ export async function GET() {
     return NextResponse.json({ success: false, coaches: [], error: String(error) });
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const newCoach = await prisma.coach.create({
+      data: {
+        nameAr: body.nameAr || "",
+        nameEn: body.nameEn || "",
+        titleAr: body.titleAr || "",
+        titleEn: body.titleEn || "",
+        roleAr: body.roleAr || "",
+        roleEn: body.roleEn || "",
+        posterSubtitleAr: body.posterSubtitleAr || "",
+        image: body.image || "/images/coaches/default.png",
+        badgeAr: body.badgeAr || "",
+        badgeEn: body.badgeEn || "",
+        specialtiesAr: typeof body.specialtiesAr === 'string' ? body.specialtiesAr : JSON.stringify(body.specialtiesAr || []),
+        specialtiesEn: typeof body.specialtiesEn === 'string' ? body.specialtiesEn : JSON.stringify(body.specialtiesEn || []),
+        instagram: body.instagram || "",
+        instagramUrl: body.instagramUrl || "",
+        whatsappMessage: body.whatsappMessage || "",
+        whatsappMessageAr: body.whatsappMessageAr || "",
+        imagePosition: body.imagePosition || "center top",
+        imageScale: body.imageScale ?? 1.0,
+        order: body.order || 0,
+      },
+    });
+    return NextResponse.json({ success: true, coach: newCoach });
+  } catch (error) {
+    console.error("Coach POST error:", error);
+    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+  }
+}

@@ -1,10 +1,23 @@
 "use client";
 
-import React from "react";
-import { Shield, Flame, Dumbbell, Coffee, Sparkles, Car } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Shield, Flame, Dumbbell, Coffee, Sparkles, Car, Star, Wifi, CheckCircle2 } from "lucide-react";
 import { clubInfo } from "@/data/clubData";
 
 export const AmenitiesGrid: React.FC = () => {
+  const [amenities, setAmenities] = useState<any[]>(clubInfo.amenities);
+
+  useEffect(() => {
+    fetch("/api/amenities")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.amenities && data.amenities.length > 0) {
+          setAmenities(data.amenities);
+        }
+      })
+      .catch((err) => console.error("Amenities fetch error:", err));
+  }, []);
+
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case "Shield":
@@ -19,8 +32,12 @@ export const AmenitiesGrid: React.FC = () => {
         return <Sparkles className="w-4 h-4 text-yellow-400" />;
       case "Car":
         return <Car className="w-4 h-4 text-sky-400" />;
+      case "Wifi":
+        return <Wifi className="w-4 h-4 text-cyan-400" />;
+      case "Star":
+        return <Star className="w-4 h-4 text-yellow-400" />;
       default:
-        return <Sparkles className="w-4 h-4 text-zinc-400" />;
+        return <CheckCircle2 className="w-4 h-4 text-red-400" />;
     }
   };
 
@@ -34,7 +51,7 @@ export const AmenitiesGrid: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-        {clubInfo.amenities.map((item) => (
+        {amenities.map((item) => (
           <div
             key={item.id}
             className="p-2.5 rounded-xl bg-zinc-900/70 border border-white/5 hover:border-white/10 text-right flex flex-col justify-between transition-colors"

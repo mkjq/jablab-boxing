@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Loader2, Image as ImageIcon } from "lucide-react";
-import { getCoaches, deleteCoach } from "@/app/actions/coaches";
 import { Coach } from "@prisma/client";
 import { CoachFormModal } from "@/components/dashboard/CoachFormModal";
 
@@ -33,8 +32,17 @@ export default function CoachesPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("هل أنت متأكد من حذف هذا الكابتن؟")) {
-      await deleteCoach(id);
-      fetchCoaches();
+      try {
+        const res = await fetch(`/api/coaches/${id}`, { method: "DELETE" });
+        if (res.ok) {
+          fetchCoaches();
+        } else {
+          alert("حدث خطأ أثناء حذف الكابتن.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء الاتصال بالخادم.");
+      }
     }
   };
 

@@ -11,6 +11,23 @@ interface PricingModalProps {
 }
 
 export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
+  const [tiers, setTiers] = React.useState<any[]>(pricingTiers);
+
+  React.useEffect(() => {
+    fetch("/api/pricing")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.pricing && data.pricing.length > 0) {
+          const parsed = data.pricing.map((t: any) => ({
+            ...t,
+            featuresAr: Array.isArray(t.featuresAr) ? t.featuresAr : JSON.parse(t.featuresAr || "[]"),
+            featuresEn: Array.isArray(t.featuresEn) ? t.featuresEn : JSON.parse(t.featuresEn || "[]"),
+          }));
+          setTiers(parsed);
+        }
+      })
+      .catch((err) => console.error("Pricing fetch error:", err));
+  }, []);
   useEffect(() => {
     if (!isOpen) return;
 
@@ -72,7 +89,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) =
 
         {/* Pricing Cards List */}
         <div className="p-4 overflow-y-auto space-y-3.5 flex-1">
-          {pricingTiers.map((tier) => {
+          {tiers.map((tier) => {
             const joinUrl = formatWhatsAppUrl(clubInfo.phoneRaw, tier.whatsappText);
 
             return (
