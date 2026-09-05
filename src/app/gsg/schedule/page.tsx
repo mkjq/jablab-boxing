@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Loader2, Calendar } from "lucide-react";
 import { ClassSession, Coach } from "@prisma/client";
 import { ScheduleFormModal } from "@/components/dashboard/ScheduleFormModal";
-import { deleteSchedule } from "@/app/actions/schedule";
 
 type SessionWithCoach = ClassSession & { coach: Coach };
 
@@ -55,8 +54,18 @@ export default function SchedulePage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("هل أنت متأكد من حذف هذه الحصة؟")) {
-      await deleteSchedule(id);
-      fetchData();
+      setSchedule((prev) => prev.filter((s) => s.id !== id));
+      try {
+        const res = await fetch(`/api/schedule/${id}`, { method: "DELETE" });
+        if (!res.ok) {
+          alert("حدث خطأ أثناء الحذف من الخادم.");
+          fetchData();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("حدث خطأ في الاتصال.");
+        fetchData();
+      }
     }
   };
 

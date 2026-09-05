@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { X, Loader2 } from "lucide-react";
-import { createUser, updateUser } from "@/app/actions/users";
 
 interface Props {
   user: any | null;
@@ -30,18 +29,27 @@ export const UserFormModal: React.FC<Props> = ({ user, onClose, onSaved }) => {
     e.preventDefault();
     setIsSaving(true);
     setError("");
-    
-    let res;
-    if (isEditing) {
-      res = await updateUser(user.id, formData);
-    } else {
-      res = await createUser(formData);
-    }
-    
-    if (res.success) {
-      onSaved();
-    } else {
-      setError(res.error || "حدث خطأ");
+
+    try {
+      const url = isEditing ? `/api/users/${user.id}` : "/api/users";
+      const method = isEditing ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        onSaved();
+      } else {
+        setError(json.error || "حدث خطأ أثناء حفظ المستخدم");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("حدث خطأ في الاتصال بالخادم");
+    } finally {
       setIsSaving(false);
     }
   };

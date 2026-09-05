@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Loader2, Dumbbell, Coffee, Wifi, CheckCircle2 } from "lucide-react";
 import { Amenity } from "@prisma/client";
 import { AmenityFormModal } from "@/components/dashboard/AmenityFormModal";
-import { deleteAmenity } from "@/app/actions/amenities";
 
 export default function AmenitiesPage() {
   const [amenities, setAmenities] = useState<Amenity[]>([]);
@@ -16,7 +15,7 @@ export default function AmenitiesPage() {
   const fetchAmenities = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/amenities");
+      const res = await fetch("/api/amenities", { cache: "no-store" });
       const data = await res.json();
       if (res.ok && data.success && data.amenities) {
         setAmenities(data.amenities);
@@ -33,8 +32,18 @@ export default function AmenitiesPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("هل أنت متأكد من حذف هذا المرفق؟")) {
-      await deleteAmenity(id);
-      fetchAmenities();
+      setAmenities((prev) => prev.filter((a) => a.id !== id));
+      try {
+        const res = await fetch(`/api/amenities/${id}`, { method: "DELETE" });
+        if (!res.ok) {
+          alert("حدث خطأ أثناء الحذف من الخادم.");
+          fetchAmenities();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("حدث خطأ في الاتصال.");
+        fetchAmenities();
+      }
     }
   };
 

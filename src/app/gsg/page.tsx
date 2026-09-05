@@ -1,89 +1,87 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Users, Dumbbell, Link as LinkIcon, Loader2 } from "lucide-react";
+import { Users, Dumbbell, Link as LinkIcon, Calendar, DollarSign, Settings, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardOverview() {
-  const [stats, setStats] = useState({ coaches: 0, loading: true });
+  const [stats, setStats] = useState({
+    coaches: 0,
+    amenities: 0,
+    links: 0,
+    pricing: 0,
+    sessions: 0,
+    loading: true,
+  });
 
   useEffect(() => {
-    // In a real app, this would fetch actual stats from a dashboard API
-    // For now, we simulate a quick load
-    setTimeout(() => {
-      setStats({ coaches: 4, loading: false }); // Placeholder count
-    }, 500);
+    Promise.all([
+      fetch("/api/coaches").then(r => r.json()).catch(() => ({ coaches: [] })),
+      fetch("/api/amenities").then(r => r.json()).catch(() => ({ amenities: [] })),
+      fetch("/api/action-links").then(r => r.json()).catch(() => ({ actionLinks: [] })),
+      fetch("/api/pricing").then(r => r.json()).catch(() => ({ pricing: [] })),
+      fetch("/api/schedule").then(r => r.json()).catch(() => ({ schedule: [] })),
+    ]).then(([coachesRes, amenitiesRes, linksRes, pricingRes, scheduleRes]) => {
+      setStats({
+        coaches: coachesRes.coaches?.length || 0,
+        amenities: amenitiesRes.amenities?.length || 0,
+        links: linksRes.actionLinks?.length || 0,
+        pricing: pricingRes.pricing?.length || 0,
+        sessions: scheduleRes.schedule?.length || 0,
+        loading: false,
+      });
+    });
   }, []);
 
+  const cards = [
+    { title: "الكباتن والمدربين", count: stats.coaches, icon: Users, href: "/gsg/coaches", color: "text-red-500", bg: "bg-red-600/10", border: "border-red-500/20" },
+    { title: "المرافق والتجهيزات", count: stats.amenities, icon: Dumbbell, href: "/gsg/amenities", color: "text-amber-500", bg: "bg-amber-600/10", border: "border-amber-500/20" },
+    { title: "الأزرار السريعة", count: stats.links, icon: LinkIcon, href: "/gsg/action-links", color: "text-blue-500", bg: "bg-blue-600/10", border: "border-blue-500/20" },
+    { title: "باقات الاشتراكات", count: stats.pricing, icon: DollarSign, href: "/gsg/pricing", color: "text-emerald-500", bg: "bg-emerald-600/10", border: "border-emerald-500/20" },
+    { title: "حصص الجدول الأسبوعي", count: stats.sessions, icon: Calendar, href: "/gsg/schedule", color: "text-purple-500", bg: "bg-purple-600/10", border: "border-purple-500/20" },
+    { title: "الإعدادات العامة", count: "نشط", icon: Settings, href: "/gsg/settings", color: "text-zinc-400", bg: "bg-zinc-800", border: "border-white/10" },
+  ];
+
   return (
-    <div className="space-y-6">
-      <header className="flex justify-between items-center">
+    <div className="space-y-6 animate-fadeIn">
+      <header className="flex justify-between items-center bg-zinc-950 p-6 rounded-3xl border border-white/10">
         <div>
           <h1 className="text-3xl font-black text-white">لوحة التحكم</h1>
-          <p className="text-zinc-400 mt-1">أهلاً بك في نظام إدارة محتوى جاب لاب</p>
+          <p className="text-zinc-400 mt-1">أهلاً بك في نظام إدارة محتوى نادي جاب لاب للملاكمة 🥊</p>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Stat Card 1 */}
-        <div className="bg-zinc-950 border border-white/10 rounded-3xl p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-red-600/10 transition-colors" />
-          <div className="flex justify-between items-start relative z-10">
-            <div>
-              <p className="text-zinc-400 font-bold mb-1">عدد الكباتن</p>
-              <h3 className="text-4xl font-black text-white">
-                {stats.loading ? <Loader2 className="w-8 h-8 animate-spin text-red-500" /> : stats.coaches}
-              </h3>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-red-600/10 flex items-center justify-center text-red-500">
-              <Users className="w-6 h-6" />
-            </div>
-          </div>
-          <Link href="/gsg/coaches" className="inline-block mt-4 text-sm text-red-400 font-bold hover:text-red-300">
-            إدارة الكباتن &larr;
-          </Link>
-        </div>
-
-        {/* Placeholder Card 2 */}
-        <div className="bg-zinc-950 border border-white/10 rounded-3xl p-6 opacity-50">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-zinc-400 font-bold mb-1">الحصص الأسبوعية</p>
-              <h3 className="text-4xl font-black text-white">12</h3>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
-              <Dumbbell className="w-6 h-6" />
-            </div>
-          </div>
-          <p className="mt-4 text-sm text-zinc-500 font-bold">قريباً...</p>
-        </div>
-
-        {/* Placeholder Card 3 */}
-        <div className="bg-zinc-950 border border-white/10 rounded-3xl p-6 opacity-50">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-zinc-400 font-bold mb-1">الروابط السريعة</p>
-              <h3 className="text-4xl font-black text-white">5</h3>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400">
-              <LinkIcon className="w-6 h-6" />
-            </div>
-          </div>
-          <p className="mt-4 text-sm text-zinc-500 font-bold">قريباً...</p>
-        </div>
-      </div>
-
-      <div className="bg-zinc-950 border border-white/10 rounded-3xl p-8 text-center mt-12">
-        <h2 className="text-xl font-black mb-2">🚀 لوحة التحكم قيد التطوير</h2>
-        <p className="text-zinc-400 text-sm">
-          يمكنك الآن التوجه إلى صفحة الكباتن لإدارتهم وتعديل بياناتهم.
-        </p>
-        <Link 
-          href="/gsg/coaches"
-          className="inline-flex mt-6 bg-white text-black font-black px-6 py-3 rounded-xl hover:bg-zinc-200 transition-colors"
-        >
-          الذهاب لصفحة الكباتن
-        </Link>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {cards.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <Link
+              key={i}
+              href={c.href}
+              className="bg-zinc-950 border border-white/10 hover:border-white/20 rounded-3xl p-6 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 block"
+            >
+              <div className="flex justify-between items-start relative z-10">
+                <div>
+                  <p className="text-zinc-400 font-bold mb-1 text-sm">{c.title}</p>
+                  <h3 className="text-3xl font-black text-white">
+                    {stats.loading && typeof c.count === "number" ? (
+                      <Loader2 className="w-6 h-6 animate-spin text-red-500" />
+                    ) : (
+                      c.count
+                    )}
+                  </h3>
+                </div>
+                <div className={`w-12 h-12 rounded-2xl ${c.bg} flex items-center justify-center ${c.color} border ${c.border}`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-1 text-xs text-zinc-400 group-hover:text-white font-bold transition-colors">
+                <span>إدارة القسم</span>
+                <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

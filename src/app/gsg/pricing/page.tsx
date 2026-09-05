@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Loader2, DollarSign } from "lucide-react";
 import { PricingTier } from "@prisma/client";
 import { PricingFormModal } from "@/components/dashboard/PricingFormModal";
-import { deletePricing } from "@/app/actions/pricing";
 
 export default function PricingPage() {
   const [pricing, setPricing] = useState<PricingTier[]>([]);
@@ -16,7 +15,7 @@ export default function PricingPage() {
   const fetchPricing = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/pricing");
+      const res = await fetch("/api/pricing", { cache: "no-store" });
       const data = await res.json();
       if (res.ok && data.success && data.pricing) {
         setPricing(data.pricing);
@@ -33,8 +32,18 @@ export default function PricingPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("هل أنت متأكد من حذف هذا الاشتراك؟")) {
-      await deletePricing(id);
-      fetchPricing();
+      setPricing((prev) => prev.filter((p) => p.id !== id));
+      try {
+        const res = await fetch(`/api/pricing/${id}`, { method: "DELETE" });
+        if (!res.ok) {
+          alert("حدث خطأ أثناء الحذف من الخادم.");
+          fetchPricing();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("حدث خطأ في الاتصال.");
+        fetchPricing();
+      }
     }
   };
 

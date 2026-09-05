@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Loader2, Link as LinkIcon, ExternalLink, MapPin, Phone, MessageCircle } from "lucide-react";
 import { ActionLink } from "@prisma/client";
 import { ActionLinkFormModal } from "@/components/dashboard/ActionLinkFormModal";
-import { deleteActionLink } from "@/app/actions/action-links";
 
 export default function ActionLinksPage() {
   const [links, setLinks] = useState<ActionLink[]>([]);
@@ -16,7 +15,7 @@ export default function ActionLinksPage() {
   const fetchLinks = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/action-links");
+      const res = await fetch("/api/action-links", { cache: "no-store" });
       const data = await res.json();
       if (res.ok && data.success && data.actionLinks) {
         setLinks(data.actionLinks);
@@ -33,8 +32,19 @@ export default function ActionLinksPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("هل أنت متأكد من حذف هذا الرابط؟")) {
-      await deleteActionLink(id);
-      fetchLinks();
+      // Optimistic delete: instantly remove from UI
+      setLinks((prev) => prev.filter((l) => l.id !== id));
+      try {
+        const res = await fetch(`/api/action-links/${id}`, { method: "DELETE" });
+        if (!res.ok) {
+          alert("حدث خطأ أثناء حذف الرابط من الخادم.");
+          fetchLinks();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("حدث خطأ في الاتصال.");
+        fetchLinks();
+      }
     }
   };
 

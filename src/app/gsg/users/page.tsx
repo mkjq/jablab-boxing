@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { UserPlus, ShieldAlert, Trash2, Edit2, Loader2, Key } from "lucide-react";
-import { getUsers, deleteUser } from "@/app/actions/users";
 import { UserFormModal } from "@/components/dashboard/UserFormModal";
 
 export default function UsersPage() {
@@ -16,7 +15,7 @@ export default function UsersPage() {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/users");
+      const res = await fetch("/api/users", { cache: "no-store" });
       const data = await res.json();
       if (data.success && data.users) {
         setUsers(data.users);
@@ -36,11 +35,17 @@ export default function UsersPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("هل أنت متأكد من حذف هذا المستخدم؟")) return;
-    const res = await deleteUser(id);
-    if (res.success) {
+    setUsers((prev) => prev.filter((u) => u.id !== id));
+    try {
+      const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        alert(json.error || "حدث خطأ أثناء الحذف");
+        loadUsers();
+      }
+    } catch (err) {
+      alert("حدث خطأ في الاتصال");
       loadUsers();
-    } else {
-      alert(res.error);
     }
   };
 

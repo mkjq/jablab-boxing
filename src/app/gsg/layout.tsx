@@ -3,12 +3,14 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, Settings, LogOut, Key, Calendar, DollarSign, Dumbbell, Link as LinkIcon } from "lucide-react";
+import { LayoutDashboard, Users, Settings, LogOut, Key, Calendar, DollarSign, Dumbbell, Link as LinkIcon, User } from "lucide-react";
+import { ProfileModal } from "@/components/dashboard/ProfileModal";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     if (pathname !== "/gsg/login") {
@@ -77,10 +79,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="p-4 mt-auto">
+        <div className="p-4 mt-auto space-y-1 border-t border-white/5">
+          <button
+            onClick={() => setIsProfileOpen(true)}
+            className="flex w-full items-center gap-3 px-4 py-2.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors font-bold text-sm"
+          >
+            <User className="w-5 h-5 text-red-500" />
+            الملف الشخصي وكلمة المرور
+          </button>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-red-950/30 transition-colors font-bold text-sm"
+            className="flex w-full items-center gap-3 px-4 py-2.5 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-red-950/30 transition-colors font-bold text-sm"
           >
             <LogOut className="w-5 h-5" />
             تسجيل الخروج
@@ -94,6 +103,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           {children}
         </div>
       </main>
+
+      {/* Profile & Password Modal */}
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </div>
   );
 }
