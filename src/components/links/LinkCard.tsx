@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   Sparkles,
   ArrowUpLeft,
+  Swords,
 } from "lucide-react";
 import { ActionLink } from "@/types";
 
@@ -53,6 +54,8 @@ export const LinkCard: React.FC<LinkCardProps> = ({ link, onOpenModal }) => {
     switch (iconName) {
       case "Flame":
         return <Flame className="w-5 h-5 text-red-400" />;
+      case "Swords":
+        return <Swords className="w-5 h-5 text-red-500 animate-pulse" />;
       case "Calendar":
         return <Calendar className="w-5 h-5 text-amber-400" />;
       case "Trophy":

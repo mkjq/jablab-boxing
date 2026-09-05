@@ -151,14 +151,20 @@ export default function SchedulePage() {
                           <td className="px-6 py-4">
                             <p className="font-bold text-white">{session.titleAr}</p>
                             <span className={`inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${
-                              session.category === 'females' ? 'bg-pink-500/20 text-pink-400' :
+                              session.category === 'females' || session.category === 'ladies' ? 'bg-pink-500/20 text-pink-400' :
                               session.category === 'kids' ? 'bg-blue-500/20 text-blue-400' :
+                              session.category === 'sparring' ? 'bg-red-500/20 text-red-400' :
+                              session.category === 'pro' ? 'bg-amber-500/20 text-amber-400' :
+                              session.category === 'conditioning' ? 'bg-orange-500/20 text-orange-400' :
                               session.category === 'personal' ? 'bg-yellow-500/20 text-yellow-400' :
-                              'bg-zinc-500/20 text-zinc-400'
+                              'bg-zinc-500/20 text-zinc-300'
                             }`}>
-                              {session.category === 'females' ? 'سيدات فقط' :
-                               session.category === 'kids' ? 'أطفال' :
-                               session.category === 'personal' ? 'تدريب شخصي' : 'مختلط'}
+                              {session.category === 'females' || session.category === 'ladies' ? 'سيدات فقط' :
+                               session.category === 'kids' ? 'أطفال وناشئين' :
+                               session.category === 'sparring' ? 'سبارينغ ونزالات' :
+                               session.category === 'pro' ? 'محترفين وبطولات' :
+                               session.category === 'conditioning' ? 'إعداد بدني' :
+                               session.category === 'personal' ? 'تدريب شخصي' : 'ملاكمة عامة'}
                             </span>
                           </td>
                           <td className="px-6 py-4">{session.levelAr}</td>

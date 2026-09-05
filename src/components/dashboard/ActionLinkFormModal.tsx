@@ -117,8 +117,17 @@ export function ActionLinkFormModal({ link, onClose, onSaved }: Props) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">الرابط أو ID النافذة</label>
-                <input type="text" name={data.actionType === 'modal' ? 'modalId' : 'href'} value={data.actionType === 'modal' ? data.modalId : data.href} onChange={handleChange} className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-2.5 text-white" dir="ltr" />
+                <label className="block text-sm font-medium text-zinc-400 mb-1">
+                  {data.actionType === 'modal' ? 'معرّف النافذة (Modal ID)' : 'الرابط (URL)'}
+                </label>
+                {data.actionType === 'modal' ? (
+                  <div className="space-y-1">
+                    <input type="text" name="modalId" value={data.modalId || ''} onChange={handleChange} placeholder="sparring أو trial أو schedule أو qr" className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-2.5 text-white" dir="ltr" />
+                    <p className="text-[11px] text-zinc-500">نوافذ جاهزة: sparring (سبارينغ وتحدي), trial (حصة مجانية), schedule (الجدول), qr (مشاركة)</p>
+                  </div>
+                ) : (
+                  <input type="text" name="href" value={data.href || ''} onChange={handleChange} className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-2.5 text-white" dir="ltr" />
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-1">الترتيب</label>

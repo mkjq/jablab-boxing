@@ -92,8 +92,8 @@ export function ScheduleFormModal({ session, coaches, onClose, onSaved }: Props)
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1">الوقت</label>
-                <input required type="time" name="time" value={data.time} onChange={handleChange} className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-2.5 text-white" dir="ltr" />
+                <label className="block text-sm font-medium text-zinc-400 mb-1">الوقت (مثال: 06:00 PM – 07:30 PM)</label>
+                <input required type="text" name="time" value={data.time} onChange={handleChange} placeholder="06:00 PM – 07:30 PM" className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-2.5 text-white font-mono" dir="ltr" />
               </div>
             </div>
 
@@ -123,10 +123,15 @@ export function ScheduleFormModal({ session, coaches, onClose, onSaved }: Props)
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-1">الفئة</label>
                 <select required name="category" value={data.category} onChange={handleChange} className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-2.5 text-white">
-                  <option value="mixed">مختلط</option>
-                  <option value="females">سيدات فقط</option>
-                  <option value="kids">أطفال</option>
+                  <option value="boxing">ملاكمة وتكنيك</option>
+                  <option value="conditioning">إعداد بدني ولياقة</option>
+                  <option value="ladies">سيدات فقط</option>
+                  <option value="females">سيدات</option>
+                  <option value="kids">أطفال وناشئين</option>
+                  <option value="sparring">سبارينغ ونزالات</option>
+                  <option value="pro">محترفين وبطولات</option>
                   <option value="personal">تدريب شخصي</option>
+                  <option value="mixed">مختلط</option>
                 </select>
               </div>
               <div>

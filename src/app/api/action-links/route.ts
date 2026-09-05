@@ -35,6 +35,34 @@ export async function GET() {
       actionLinks = await prisma.actionLink.findMany({
         orderBy: { order: "asc" },
       });
+    } else {
+      // Check if sparring action link exists
+      const hasSparring = actionLinks.some((l: any) => l.id === "sparring" || l.modalId === "sparring");
+      if (!hasSparring) {
+        const sparringLink = defaultActionLinks.find((l) => l.id === "sparring");
+        if (sparringLink) {
+          await prisma.actionLink.create({
+            data: {
+              id: sparringLink.id,
+              titleEn: sparringLink.titleEn,
+              titleAr: sparringLink.titleAr,
+              subtitleEn: sparringLink.subtitleEn || '',
+              subtitleAr: sparringLink.subtitleAr || '',
+              icon: sparringLink.icon,
+              badge: sparringLink.badge || '',
+              badgeColor: sparringLink.badgeColor || '',
+              actionType: sparringLink.actionType,
+              modalId: sparringLink.modalId || '',
+              href: sparringLink.href || '',
+              highlight: sparringLink.highlight || false,
+              order: 1, // position right after free trial
+            },
+          });
+          actionLinks = await prisma.actionLink.findMany({
+            orderBy: { order: "asc" },
+          });
+        }
+      }
     }
 
     return NextResponse.json({ success: true, actionLinks });

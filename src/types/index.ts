@@ -72,7 +72,7 @@ export interface ActionLink {
   badge?: string;
   badgeColor?: "red" | "gold" | "silver";
   actionType: "modal" | "link" | "whatsapp" | "tel" | "map";
-  modalId?: "schedule" | "pricing" | "trial" | "location" | "qr";
+  modalId?: "schedule" | "pricing" | "trial" | "location" | "qr" | "sparring" | string;
   href?: string;
   highlight?: boolean;
 }
@@ -84,7 +84,7 @@ export interface ScheduleSession {
   coachId: string;
   coachNameEn: string;
   coachNameAr: string;
-  category: "all" | "boxing" | "conditioning" | "sparring" | "ladies" | "kids" | "pro";
+  category: "all" | "boxing" | "conditioning" | "sparring" | "ladies" | "kids" | "pro" | "men" | "mixed" | "females" | "personal" | string;
   levelEn: string;
   levelAr: string;
 }

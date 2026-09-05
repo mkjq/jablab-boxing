@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Calendar, Clock, User, Sparkles, MessageCircle } from "lucide-react";
+import Link from "next/link";
+import { X, Calendar, Clock, User, Sparkles, MessageCircle, ArrowLeft } from "lucide-react";
 import { scheduleData, clubInfo } from "@/data/clubData";
 import { formatWhatsAppUrl } from "@/lib/utils";
 
@@ -203,8 +204,18 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose })
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3 border-t border-zinc-800/80 bg-zinc-900/60 text-center text-xs text-zinc-400">
-          💡 للتسجيل أو الاستفسار عن الحصص الخاصة، يمكنك التواصل معنا مباشرة عبر الواتساب.
+        <div className="p-3 border-t border-zinc-800/80 bg-zinc-900/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+          <span className="text-zinc-400 text-[11px] text-center sm:text-right">
+            💡 للتسجيل أو الاستفسار عن الحصص الخاصة، تواصل معنا عبر الواتساب.
+          </span>
+          <Link
+            href="/schedule"
+            onClick={onClose}
+            className="flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 font-bold text-xs transition-all w-full sm:w-auto"
+          >
+            <span>عرض الجدول بالتفصيل</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ import { AmenitiesGrid } from "@/components/location/AmenitiesGrid";
 import { ScheduleModal } from "@/components/modals/ScheduleModal";
 import { ShareQrModal } from "@/components/modals/ShareQrModal";
 import { TrialModal } from "@/components/modals/TrialModal";
+import { SparringModal } from "@/components/modals/SparringModal";
 import { ClubFooter } from "@/components/footer/ClubFooter";
 
 export default function HomePage() {
@@ -75,6 +76,10 @@ export default function HomePage() {
       />
       <TrialModal
         isOpen={activeModal === "trial"}
+        onClose={handleCloseModal}
+      />
+      <SparringModal
+        isOpen={activeModal === "sparring"}
         onClose={handleCloseModal}
       />
     </div>
