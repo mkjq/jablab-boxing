@@ -145,7 +145,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose })
 
         {/* Sessions List */}
         <div className="p-4 overflow-y-auto space-y-3 flex-1">
-          {currentDay.sessions.map((session, index) => {
+          {currentDay.sessions.map((session: any, index: number) => {
             const bookingMessage = `مرحباً نادي جاب لاب، أود الاستفسار والتسجيل في حصة (${session.titleAr}) يوم ${currentDay.dayAr} الساعة ${session.time}.`;
             const waUrl = formatWhatsAppUrl(clubInfo.phoneRaw, bookingMessage);
 

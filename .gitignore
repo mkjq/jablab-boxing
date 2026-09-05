@@ -15,3 +15,4 @@ out
 
 # Prisma
 /src/generated/prisma
+*.tsbuildinfo

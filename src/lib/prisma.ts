@@ -14,7 +14,7 @@ const connectionString = process.env.DATABASE_URL || "postgres://dummy:dummy@dum
 const sql = neon(connectionString);
 // neon() v0.10+ requires sql.query for conventional function calls with placeholders
 const client = (async (query: any, params: any, options: any) => {
-  const result = await sql.query(query, params, options);
+  const result: any = await sql.query(query, params, options);
   if (result && Array.isArray(result.rows)) {
     for (let r = 0; r < result.rows.length; r++) {
       const row = result.rows[r];

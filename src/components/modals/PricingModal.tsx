@@ -145,7 +145,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) =
 
                 {/* Features List */}
                 <div className="space-y-1.5 py-2 border-t border-white/5">
-                  {tier.featuresAr.map((feat, i) => (
+                  {tier.featuresAr.map((feat: string, i: number) => (
                     <div key={i} className="flex items-center gap-2 text-right">
                       <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
                       <span className="text-xs font-medium text-zinc-300">{feat}</span>
