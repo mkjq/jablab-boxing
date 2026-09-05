@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { clubInfo, actionLinks, scheduleData, pricingTiers } from '@/data/clubData';
 
-const prisma = new PrismaClient();
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
