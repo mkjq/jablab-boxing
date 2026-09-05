@@ -33,7 +33,6 @@ export async function POST(req: Request) {
         levelEn: body.levelEn || "",
         levelAr: body.levelAr || "",
         coachId: body.coachId,
-        clubSettingsId: "global",
       },
     });
     return NextResponse.json({ success: true, session: newSession });
