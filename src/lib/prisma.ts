@@ -1,22 +1,22 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { PrismaNeon } from '@prisma/adapter-neon';
+import { neon } from '@neondatabase/serverless';
+import { PrismaNeonHTTP } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
 
-// Required for Node.js, Cloudflare has native WebSocket
-if (typeof WebSocket === 'undefined') {
-  // @ts-ignore
-  import('ws').then(ws => neonConfig.webSocketConstructor = ws.default);
-}
+const connectionString = process.env.DATABASE_URL!;
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+const sql = neon(connectionString);
+const adapter = new PrismaNeonHTTP(sql);
 
-function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL || "postgres://dummy:dummy@dummy.neon.tech/dummy";
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool);
+const prismaClientSingleton = () => {
   return new PrismaClient({ adapter });
-}
+};
 
-export const prisma = globalForPrisma.prisma || createPrismaClient();
+declare const globalThis: {
+  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
+} & typeof global;
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;
+
+export { prisma };
