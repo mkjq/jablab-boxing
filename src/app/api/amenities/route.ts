@@ -1,14 +1,35 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { clubInfo } from "@/data/clubData";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const amenities = await prisma.amenity.findMany({
+    let amenities = await prisma.amenity.findMany({
       orderBy: { order: "asc" },
     });
+
+    if (amenities.length === 0) {
+      for (let i = 0; i < clubInfo.amenities.length; i++) {
+        const a = clubInfo.amenities[i];
+        await prisma.amenity.create({
+          data: {
+            nameEn: a.nameEn,
+            nameAr: a.nameAr,
+            icon: a.icon,
+            descEn: a.descEn,
+            descAr: a.descAr,
+            order: i,
+          },
+        });
+      }
+      amenities = await prisma.amenity.findMany({
+        orderBy: { order: "asc" },
+      });
+    }
+
     return NextResponse.json({ success: true, amenities });
   } catch (error) {
     console.error("Amenities GET error:", error);

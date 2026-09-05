@@ -2,10 +2,12 @@ import { neon } from '@neondatabase/serverless';
 import { PrismaNeonHTTP } from '@prisma/adapter-neon';
 import { PrismaClient } from '@prisma/client';
 
-const connectionString = process.env.DATABASE_URL!;
+const connectionString = process.env.DATABASE_URL || "postgres://dummy:dummy@dummy.neon.tech/dummy";
 
 const sql = neon(connectionString);
-const adapter = new PrismaNeonHTTP(sql);
+// neon() v0.10+ requires sql.query for conventional function calls with placeholders
+const client = ((query: any, params: any, options: any) => sql.query(query, params, options)) as any;
+const adapter = new PrismaNeonHTTP(client);
 
 const prismaClientSingleton = () => {
   return new PrismaClient({ adapter });
