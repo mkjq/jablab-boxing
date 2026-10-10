@@ -35,3 +35,40 @@ export async function getSession() {
 export async function logout() {
   cookies().set("session", "", { expires: new Date(0) });
 }
+
+export async function setMemberSession(member: { id: string; name: string; phone: string; email?: string | null }) {
+  // Members stay logged in for 90 days on their mobile device for seamless gym wall QR scanning
+  const expires = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+  const session = await encrypt({
+    memberId: member.id,
+    name: member.name,
+    phone: member.phone,
+    email: member.email || null,
+    role: "MEMBER",
+    expires,
+  });
+
+  cookies().set("member_session", session, {
+    expires,
+    httpOnly: true,
+    path: "/",
+    sameSite: "lax",
+  });
+}
+
+export async function getMemberSession(): Promise<{ memberId: string; name: string; phone: string; email?: string | null; role: string } | null> {
+  const token = cookies().get("member_session")?.value;
+  if (!token) return null;
+  try {
+    const payload = await decrypt(token);
+    if (!payload || payload.role !== "MEMBER" || !payload.memberId) return null;
+    return payload as { memberId: string; name: string; phone: string; email?: string | null; role: string };
+  } catch {
+    return null;
+  }
+}
+
+export async function logoutMember() {
+  cookies().set("member_session", "", { expires: new Date(0), path: "/" });
+}
+

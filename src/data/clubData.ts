@@ -83,6 +83,19 @@ export const clubInfo: ClubInfo = {
 
 export const actionLinks: ActionLink[] = [
   {
+    id: "checkin",
+    titleEn: "Member Check-In & Sessions",
+    titleAr: "تسجيل حضور المتدربين (Check-In) 🥊",
+    subtitleEn: "Scan gym QR code or view session count",
+    subtitleAr: "امسح باركود النادي واحتسب حصتك فوراً",
+    icon: "QrCode",
+    badge: "ATTENDANCE",
+    badgeColor: "gold",
+    actionType: "link",
+    href: "/checkin",
+    highlight: true,
+  },
+  {
     id: "trial",
     titleEn: "Book Free Trial Session",
     titleAr: "احجز حصتك التجريبية المجانية",

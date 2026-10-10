@@ -3,7 +3,7 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, Settings, LogOut, Key, Calendar, DollarSign, Dumbbell, Link as LinkIcon, User } from "lucide-react";
+import { LayoutDashboard, Users, Settings, LogOut, Key, Calendar, DollarSign, Dumbbell, Link as LinkIcon, User, UserCheck } from "lucide-react";
 import { ProfileModal } from "@/components/dashboard/ProfileModal";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -35,6 +35,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   const links = [
     { href: "/gsg", label: "الرئيسية", icon: LayoutDashboard },
+    { href: "/gsg/members", label: "المشتركين والحضور", icon: UserCheck },
     { href: "/gsg/settings", label: "الإعدادات العامة", icon: Settings },
     { href: "/gsg/coaches", label: "الكباتن", icon: Users },
     { href: "/gsg/schedule", label: "جدول الحصص", icon: Calendar },
