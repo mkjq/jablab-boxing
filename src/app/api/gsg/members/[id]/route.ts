@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { validateAndFormatJordanianPhone } from "@/lib/phone";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
-
-function normalizePhone(phone: string): string {
-  return phone.replace(/[\s\-\(\)]/g, "").trim();
-}
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -47,7 +44,16 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const dataToUpdate: any = {};
     if (name) dataToUpdate.name = name.trim();
-    if (phone) dataToUpdate.phone = normalizePhone(phone);
+    if (phone) {
+      const phoneValidation = validateAndFormatJordanianPhone(phone);
+      if (!phoneValidation.isValid) {
+        return NextResponse.json(
+          { success: false, error: phoneValidation.error || "يرجى إدخال رقم هاتف أردني صحيح" },
+          { status: 400 }
+        );
+      }
+      dataToUpdate.phone = phoneValidation.phone;
+    }
     if (email !== undefined) dataToUpdate.email = email ? email.trim().toLowerCase() : null;
     if (totalCheckIns !== undefined) dataToUpdate.totalCheckIns = parseInt(totalCheckIns, 10) || 0;
 

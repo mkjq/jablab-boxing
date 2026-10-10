@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { validateAndFormatJordanianPhone } from "@/lib/phone";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
-
-function normalizePhone(phone: string): string {
-  return phone.replace(/[\s\-\(\)]/g, "").trim();
-}
 
 export async function GET(req: Request) {
   try {
@@ -101,7 +98,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "رقم الهاتف مطلوب" }, { status: 400 });
     }
 
-    const cleanPhone = normalizePhone(phone);
+    const phoneValidation = validateAndFormatJordanianPhone(phone);
+    if (!phoneValidation.isValid) {
+      return NextResponse.json(
+        { success: false, error: phoneValidation.error || "يرجى إدخال رقم هاتف أردني صحيح (مثال: 0791234567)" },
+        { status: 400 }
+      );
+    }
+
+    const cleanPhone = phoneValidation.phone;
 
     const existing = await prisma.member.findUnique({
       where: { phone: cleanPhone },

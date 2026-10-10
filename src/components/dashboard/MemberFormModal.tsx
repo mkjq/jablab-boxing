@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, User, Phone, Mail, Trophy, Loader2 } from "lucide-react";
+import { X, User, Phone, Mail, Trophy, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { validateAndFormatJordanianPhone } from "@/lib/phone";
 
 interface MemberFormModalProps {
   member?: any | null;
@@ -26,8 +27,10 @@ export function MemberFormModal({ member, onClose, onSaved }: MemberFormModalPro
       setError("اسم اللاعب مطلوب");
       return;
     }
-    if (!phone.trim()) {
-      setError("رقم الهاتف مطلوب");
+
+    const phoneValidation = validateAndFormatJordanianPhone(phone);
+    if (!phoneValidation.isValid) {
+      setError(phoneValidation.error || "يرجى إدخال رقم هاتف أردني صحيح (مثال: 0791234567)");
       return;
     }
 
@@ -116,23 +119,40 @@ export function MemberFormModal({ member, onClose, onSaved }: MemberFormModalPro
 
           {/* Phone */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-zinc-300">
-              رقم الهاتف <span className="text-red-500">*</span>
+            <label className="text-xs font-bold text-zinc-300 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <span>رقم الهاتف الأردني <span className="text-red-500">*</span></span>
+                <span>🇯🇴</span>
+              </span>
+              <span className="text-[10px] text-amber-400 font-normal">زين (079) • أورنج (077) • أمنية (078)</span>
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-zinc-500">
                 <Phone className="w-4 h-4" />
               </div>
               <input
-                type="tel"
+                type="text"
                 required
                 dir="ltr"
-                placeholder="079XXXXXXXX"
+                placeholder="0791234567 أو +962..."
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-zinc-900 border border-white/10 rounded-xl pr-10 pl-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500 text-right"
+                className="w-full bg-zinc-900 border border-white/10 rounded-xl pr-10 pl-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500 text-right font-mono"
               />
             </div>
+            {phone.trim() && (
+              <div className="text-[11px] pt-0.5">
+                {validateAndFormatJordanianPhone(phone).isValid ? (
+                  <span className="text-emerald-400 font-mono" dir="ltr">
+                    {validateAndFormatJordanianPhone(phone).phone} (معتمد ✓)
+                  </span>
+                ) : (
+                  <span className="text-red-400">
+                    {validateAndFormatJordanianPhone(phone).error}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Email */}

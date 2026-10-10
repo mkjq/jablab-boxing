@@ -1,14 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { setMemberSession, getMemberSession, logoutMember } from "@/lib/auth";
+import { validateAndFormatJordanianPhone } from "@/lib/phone";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
-
-function normalizePhone(phone: string): string {
-  // Clean phone number: remove spaces, dashes, parentheses
-  return phone.replace(/[\s\-\(\)]/g, "").trim();
-}
 
 export async function GET() {
   try {
@@ -53,68 +49,98 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, phone, email } = body;
+    const { mode, name, phone, email } = body;
 
-    if (!phone || typeof phone !== "string" || !phone.trim()) {
+    // Validate phone number as strict Jordanian mobile number
+    const phoneValidation = validateAndFormatJordanianPhone(phone);
+    if (!phoneValidation.isValid) {
       return NextResponse.json(
-        { success: false, error: "رقم الهاتف مطلوب لإتمام التسجيل" },
+        { success: false, error: phoneValidation.error || "يرجى إدخال رقم هاتف أردني صحيح" },
         { status: 400 }
       );
     }
 
-    const cleanPhone = normalizePhone(phone);
-    if (cleanPhone.length < 6) {
+    const cleanJordanPhone = phoneValidation.phone; // e.g. +962791234567
+
+    // --- Mode 1: LOGIN (المشترك لديه حساب مسبقاً) ---
+    if (mode === "login") {
+      const member = await prisma.member.findUnique({
+        where: { phone: cleanJordanPhone },
+      });
+
+      if (!member) {
+        return NextResponse.json(
+          {
+            success: false,
+            notFound: true,
+            error: "رقم الهاتف هذا غير مسجل في النادي. يرجى الضغط على تبويب 'إنشاء حساب جديد' لإتمام التسجيل لأول مرة.",
+          },
+          { status: 404 }
+        );
+      }
+
+      await setMemberSession({
+        id: member.id,
+        name: member.name,
+        phone: member.phone,
+        email: member.email,
+      });
+
+      return NextResponse.json({
+        success: true,
+        isNew: false,
+        member: {
+          id: member.id,
+          name: member.name,
+          phone: member.phone,
+          email: member.email,
+          totalCheckIns: member.totalCheckIns,
+        },
+      });
+    }
+
+    // --- Mode 2: REGISTER (مشترك جديد يسجل لأول مرة) ---
+    if (!name || typeof name !== "string" || !name.trim()) {
       return NextResponse.json(
-        { success: false, error: "يرجى إدخال رقم هاتف صحيح" },
+        { success: false, error: "يرجى كتابة اسمك الكريم لإنشاء الحساب" },
         { status: 400 }
       );
     }
 
-    // Check if member already exists
+    if (name.trim().length < 2) {
+      return NextResponse.json(
+        { success: false, error: "الاسم قصير جداً، يرجى كتابة اسمك الكامل" },
+        { status: 400 }
+      );
+    }
+
     let member = await prisma.member.findUnique({
-      where: { phone: cleanPhone },
+      where: { phone: cleanJordanPhone },
     });
 
     let isNew = false;
 
     if (member) {
-      // Existing member logging in
-      // If a new name is provided, we can update it if existing was shorter or different
-      if (name && name.trim() && name.trim() !== member.name) {
-        member = await prisma.member.update({
-          where: { id: member.id },
-          data: {
-            name: name.trim(),
-            ...(email && email.trim() ? { email: email.trim().toLowerCase() } : {}),
-          },
-        });
-      } else if (email && email.trim() && !member.email) {
-        member = await prisma.member.update({
-          where: { id: member.id },
-          data: { email: email.trim().toLowerCase() },
-        });
-      }
+      // If phone already registered, update name or email if provided
+      member = await prisma.member.update({
+        where: { id: member.id },
+        data: {
+          name: name.trim(),
+          ...(email && email.trim() ? { email: email.trim().toLowerCase() } : {}),
+        },
+      });
     } else {
-      // New member registering
-      if (!name || typeof name !== "string" || !name.trim()) {
-        return NextResponse.json(
-          { success: false, error: "يرجى كتابة اسمك الكريم لإنشاء الحساب" },
-          { status: 400 }
-        );
-      }
-
       isNew = true;
       member = await prisma.member.create({
         data: {
           name: name.trim(),
-          phone: cleanPhone,
+          phone: cleanJordanPhone,
           email: email && email.trim() ? email.trim().toLowerCase() : null,
           totalCheckIns: 0,
         },
       });
     }
 
-    // Save session in cookie (valid for 90 days)
     await setMemberSession({
       id: member.id,
       name: member.name,
